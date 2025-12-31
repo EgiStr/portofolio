@@ -107,11 +107,30 @@ async function getExperiences() {
   }
 }
 
+async function getProjects() {
+  try {
+    const projects = await prisma.project.findMany({
+      where: { status: "PUBLISHED" },
+      include: { techStack: true },
+      orderBy: [
+        { featured: "desc" },
+        { displayOrder: "asc" },
+        { createdAt: "desc" },
+      ],
+    });
+    return projects;
+  } catch (error) {
+    console.error("Failed to fetch projects:", error);
+    return [];
+  }
+}
+
 export default async function Home() {
-  const [settings, skills, experiences] = await Promise.all([
+  const [settings, skills, experiences, projects] = await Promise.all([
     getSettings(),
     getSkills(),
     getExperiences(),
+    getProjects(),
   ]);
 
   const heroProps = {
@@ -142,7 +161,7 @@ export default async function Home() {
           profileImage="/eggisatria.png"
         />
         <Experience experiences={experiences} />
-        <Projects />
+        <Projects initialProjects={projects as any} />
         <Contact
         // email={settings.email}
         // socialLinks={heroProps.socialLinks}

@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
+import { prisma } from "@ecosystem/database";
 
 interface Post {
   slug: string;
@@ -12,30 +13,27 @@ interface Post {
 
 async function getRecentPosts(): Promise<Post[]> {
   try {
-    // In production, use absolute URL or environment variable
-    const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3001";
-    const response = await fetch(`${baseUrl}/api/posts?limit=5`, {
-      next: { revalidate: 60 }, // Revalidate every 60 seconds
+    const posts = await prisma.blogPost.findMany({
+      where: { published: true },
+      include: {
+        _count: { select: { views: true } },
+      },
+      orderBy: { publishedAt: "desc" },
+      take: 5,
     });
 
-    if (!response.ok) {
-      throw new Error("Failed to fetch posts");
-    }
-
-    return response.json();
+    return posts.map((post) => ({
+      slug: post.slug,
+      title: post.title,
+      excerpt: post.excerpt || "",
+      publishedAt:
+        post.publishedAt?.toISOString() || post.createdAt.toISOString(),
+      readingTime: post.readingTime,
+      viewCount: post._count.views,
+    }));
   } catch (error) {
     console.error("Error fetching posts:", error);
-    // Return placeholder data if fetch fails
-    return [
-      {
-        slug: "building-personal-ecosystem",
-        title: "Building a Personal Digital Ecosystem",
-        excerpt:
-          "How I built a multi-domain personal ecosystem with Next.js, Prisma, and PostgreSQL.",
-        publishedAt: "2024-01-15T00:00:00.000Z",
-        readingTime: 8,
-      },
-    ];
+    return [];
   }
 }
 

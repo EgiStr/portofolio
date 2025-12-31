@@ -1,6 +1,7 @@
 import { MetadataRoute } from "next";
+import { prisma } from "@ecosystem/database";
 
-// Define Post interface to match what's expected from the API
+// Define Post interface
 interface Post {
   slug: string;
   updatedAt: string;
@@ -8,15 +9,18 @@ interface Post {
 
 async function getPosts(): Promise<Post[]> {
   try {
-    // In production, this should fetch from your actual data source or API
-    // Ensure the API URL is correct for server-side fetching
-    const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3001";
-    const response = await fetch(`${baseUrl}/api/posts`, {
-      next: { revalidate: 3600 }, // Key for ISR
+    const posts = await prisma.blogPost.findMany({
+      where: { published: true },
+      select: {
+        slug: true,
+        updatedAt: true,
+      },
     });
 
-    if (!response.ok) return [];
-    return response.json();
+    return posts.map((post) => ({
+      slug: post.slug,
+      updatedAt: post.updatedAt.toISOString(),
+    }));
   } catch (error) {
     console.error("Failed to fetch posts for sitemap:", error);
     return [];

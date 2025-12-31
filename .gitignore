@@ -37,6 +37,7 @@ pnpm-debug.log*
 # Prisma
 packages/database/prisma/*.db
 packages/database/prisma/*.db-journal
+packages/database/src/generated/
 
 # Testing
 coverage/

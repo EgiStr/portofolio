@@ -4,6 +4,7 @@ import { ArrowLeft, Calendar, Clock, Eye } from "lucide-react";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { ShareButtons } from "@/components/share-buttons";
+import { prisma } from "@ecosystem/database";
 
 interface Post {
   slug: string;
@@ -24,19 +25,32 @@ interface PageProps {
 
 async function getPost(slug: string): Promise<Post | null> {
   try {
-    const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3001";
-    const response = await fetch(`${baseUrl}/api/posts/${slug}`, {
-      next: { revalidate: 60 },
+    const post = await prisma.blogPost.findUnique({
+      where: { slug, published: true },
+      include: {
+        tags: true,
+        author: { select: { name: true } },
+        _count: { select: { views: true } },
+      },
     });
 
-    if (!response.ok) {
-      if (response.status === 404) {
-        return null;
-      }
-      throw new Error("Failed to fetch post");
-    }
+    if (!post) return null;
 
-    return response.json();
+    return {
+      slug: post.slug,
+      title: post.title,
+      excerpt: post.excerpt || "",
+      content: post.content,
+      publishedAt:
+        post.publishedAt?.toISOString() || post.createdAt.toISOString(),
+      readingTime: post.readingTime,
+      viewCount: post._count.views,
+      coverImage: post.coverImage,
+      tags: post.tags,
+      author: post.author
+        ? { name: post.author.name || "Anonymous" }
+        : undefined,
+    };
   } catch (error) {
     console.error("Error fetching post:", error);
     return null;
@@ -45,9 +59,18 @@ async function getPost(slug: string): Promise<Post | null> {
 
 async function recordView(slug: string) {
   try {
-    const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3001";
-    await fetch(`${baseUrl}/api/posts/${slug}`, {
-      method: "POST",
+    // Only record views in production and NOT during build
+    if (
+      process.env.NODE_ENV !== "production" ||
+      process.env.NEXT_PHASE === "phase-production-build"
+    ) {
+      return;
+    }
+
+    await prisma.blogView.create({
+      data: {
+        post: { connect: { slug } },
+      },
     });
   } catch (error) {
     console.error("Failed to record view:", error);

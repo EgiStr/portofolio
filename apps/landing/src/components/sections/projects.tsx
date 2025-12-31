@@ -39,12 +39,18 @@ const itemVariants = {
   },
 };
 
-export function Projects() {
-  const [featuredProjects, setFeaturedProjects] = useState<Project[]>([]);
-  const [otherProjects, setOtherProjects] = useState<Project[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+export function Projects({ initialProjects }: { initialProjects?: Project[] }) {
+  const [featuredProjects, setFeaturedProjects] = useState<Project[]>(
+    initialProjects?.filter((p) => p.featured) || [],
+  );
+  const [otherProjects, setOtherProjects] = useState<Project[]>(
+    initialProjects?.filter((p) => !p.featured).slice(0, 3) || [],
+  );
+  const [isLoading, setIsLoading] = useState(!initialProjects);
 
   useEffect(() => {
+    if (initialProjects) return;
+
     async function fetchProjects() {
       try {
         const response = await fetch("/api/projects");
@@ -60,7 +66,7 @@ export function Projects() {
       }
     }
     fetchProjects();
-  }, []);
+  }, [initialProjects]);
 
   async function handleProjectClick(projectId: string) {
     try {
