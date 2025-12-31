@@ -14,14 +14,17 @@ const inter = Inter({
 async function getSettings() {
   try {
     const configs = await prisma.siteConfig.findMany();
-    return configs.reduce<Record<string, any>>((acc, config) => {
-      try {
-        acc[config.key] = JSON.parse(config.value);
-      } catch {
-        acc[config.key] = config.value;
-      }
-      return acc;
-    }, {});
+    return configs.reduce<Record<string, any>>(
+      (acc: Record<string, any>, config) => {
+        try {
+          acc[config.key] = JSON.parse(config.value);
+        } catch {
+          acc[config.key] = config.value;
+        }
+        return acc;
+      },
+      {},
+    );
   } catch (error) {
     console.error("Failed to fetch settings:", error);
     return {};
