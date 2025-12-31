@@ -64,7 +64,7 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
     }
 
     // Handle tags: create new tags if they don't exist
-    let tagRecords = [];
+    let tagRecords: { id: string }[] = [];
     if (tags) {
       tagRecords = await Promise.all(
         (tags as string[]).map(async (tagName: string) => {
