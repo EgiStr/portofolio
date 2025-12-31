@@ -8,6 +8,7 @@ import { Contact } from "@/components/sections/contact";
 import { Spotlight, GridBackground } from "@/components/ui/spotlight";
 import { prisma } from "@ecosystem/database";
 
+export const dynamic = "force-dynamic";
 export const revalidate = 60; // Revalidate every 60 seconds
 
 async function getSettings() {
@@ -16,9 +17,9 @@ async function getSettings() {
     return configs.reduce(
       (acc, config) => {
         try {
-          acc[config.key] = JSON.parse(config.value);
+          (acc as any)[config.key] = JSON.parse(config.value);
         } catch {
-          acc[config.key] = config.value;
+          (acc as any)[config.key] = config.value;
         }
         return acc;
       },
