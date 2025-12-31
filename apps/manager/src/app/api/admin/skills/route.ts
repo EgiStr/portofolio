@@ -1,8 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
-import { prisma } from "@ecosystem/database";
-import { Prisma } from "@prisma/client";
+import { prisma, Prisma } from "@ecosystem/database";
 
 // GET /api/admin/skills - List all skills
 export async function GET(request: NextRequest) {
