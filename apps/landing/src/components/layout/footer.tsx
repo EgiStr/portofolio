@@ -42,7 +42,7 @@ export function Footer() {
               Built with <Heart className="w-4 h-4 text-primary" /> by Eggi
               Satria
             </p>
-            <p className="text-xs mt-1 opacity-70">
+            <p className="text-xs mt-1 text-muted-foreground/80">
               Design inspired by Brittany Chiang
             </p>
           </a>

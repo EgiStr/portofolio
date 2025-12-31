@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@ecosystem/database";
 
+export const dynamic = "force-dynamic";
+
 // CORS Headers
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",

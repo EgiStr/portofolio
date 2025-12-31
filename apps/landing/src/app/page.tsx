@@ -7,9 +7,37 @@ import { Projects } from "@/components/sections/projects";
 import { Contact } from "@/components/sections/contact";
 import { Spotlight, GridBackground } from "@/components/ui/spotlight";
 import { prisma } from "@ecosystem/database";
+import type { Metadata } from "next";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 60; // Revalidate every 60 seconds
+
+export async function generateMetadata(): Promise<Metadata> {
+  try {
+    const configs = await prisma.siteConfig.findMany();
+    const settings = configs.reduce<Record<string, any>>((acc, config) => {
+      try {
+        acc[config.key] = JSON.parse(config.value);
+      } catch {
+        acc[config.key] = config.value;
+      }
+      return acc;
+    }, {});
+
+    return {
+      title: settings.siteName || "Eggi Satria | Full Stack Developer",
+      description:
+        settings.heroDescription ||
+        "Full Stack Developer passionate about building exceptional digital experiences.",
+    };
+  } catch (error) {
+    return {
+      title: "Eggi Satria | Full Stack Developer",
+      description:
+        "Full Stack Developer passionate about building exceptional digital experiences.",
+    };
+  }
+}
 
 async function getSettings() {
   try {
