@@ -9,6 +9,7 @@
     "seed": "npx tsx prisma/seed.ts"
   },
   "scripts": {
+    "postinstall": "prisma generate",
     "build": "prisma generate && tsup src/index.ts --format cjs,esm --dts",
     "dev": "tsup src/index.ts --format cjs,esm --dts --watch",
     "db:generate": "prisma generate",
