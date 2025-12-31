@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@ecosystem/database";
 
+export const dynamic = "force-dynamic";
+
 // GET /api/posts - Get all published blog posts
 export async function GET(request: NextRequest) {
   try {
@@ -27,18 +29,7 @@ export async function GET(request: NextRequest) {
       take: limit,
     });
 
-    // Filter by search if provided
-    let filteredPosts = posts;
-    if (search) {
-      const searchLower = search.toLowerCase();
-      filteredPosts = posts.filter(
-        (post) =>
-          post.title.toLowerCase().includes(searchLower) ||
-          post.excerpt.toLowerCase().includes(searchLower),
-      );
-    }
-
-    return NextResponse.json(filteredPosts.slice(0, limit));
+    return NextResponse.json(posts);
   } catch (error) {
     console.error("Failed to fetch posts:", error);
     return NextResponse.json(
