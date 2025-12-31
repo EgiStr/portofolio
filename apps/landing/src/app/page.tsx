@@ -15,14 +15,17 @@ export const revalidate = 60; // Revalidate every 60 seconds
 export async function generateMetadata(): Promise<Metadata> {
   try {
     const configs = await prisma.siteConfig.findMany();
-    const settings = configs.reduce<Record<string, any>>((acc, config) => {
-      try {
-        acc[config.key] = JSON.parse(config.value);
-      } catch {
-        acc[config.key] = config.value;
-      }
-      return acc;
-    }, {});
+    const settings = configs.reduce(
+      (acc: Record<string, any>, config: any) => {
+        try {
+          acc[config.key] = JSON.parse(config.value);
+        } catch {
+          acc[config.key] = config.value;
+        }
+        return acc;
+      },
+      {} as Record<string, any>,
+    );
 
     return {
       title: settings.siteName || "Eggi Satria | Full Stack Developer",
@@ -42,14 +45,17 @@ export async function generateMetadata(): Promise<Metadata> {
 async function getSettings() {
   try {
     const configs = await prisma.siteConfig.findMany();
-    return configs.reduce<Record<string, any>>((acc, config) => {
-      try {
-        acc[config.key] = JSON.parse(config.value);
-      } catch {
-        acc[config.key] = config.value;
-      }
-      return acc;
-    }, {});
+    return configs.reduce(
+      (acc: Record<string, any>, config: any) => {
+        try {
+          acc[config.key] = JSON.parse(config.value);
+        } catch {
+          acc[config.key] = config.value;
+        }
+        return acc;
+      },
+      {} as Record<string, any>,
+    );
   } catch (error) {
     console.error("Failed to fetch settings:", error);
     return {};
@@ -62,7 +68,7 @@ async function getSkills() {
       orderBy: { order: "asc" },
       take: 8,
     });
-    return skills.map((s) => s.name);
+    return skills.map((s: any) => s.name);
   } catch (error) {
     console.error("Failed to fetch skills:", error);
     return [];
@@ -75,7 +81,7 @@ async function getExperiences() {
       orderBy: { order: "asc" },
     });
 
-    return experiences.map((exp) => {
+    return experiences.map((exp: any) => {
       const startDate = new Date(exp.startDate).toLocaleDateString("en-US", {
         month: "short",
         year: "numeric",
@@ -90,7 +96,9 @@ async function getExperiences() {
           : "";
 
       const description = exp.description
-        ? exp.description.split("\n").filter((line) => line.trim().length > 0)
+        ? exp.description
+            .split("\n")
+            .filter((line: any) => line.trim().length > 0)
         : [];
 
       return {

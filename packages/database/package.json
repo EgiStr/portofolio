@@ -10,7 +10,7 @@
   },
   "scripts": {
     "postinstall": "prisma generate",
-    "build": "prisma generate && tsup src/index.ts --format cjs,esm",
+    "build": "prisma generate && tsup src/index.ts --format cjs,esm --dts",
     "dev": "tsup src/index.ts --format cjs,esm --dts --watch",
     "db:generate": "prisma generate",
     "db:push": "prisma db push",

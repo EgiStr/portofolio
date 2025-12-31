@@ -22,7 +22,7 @@ async function getRecentPosts(): Promise<Post[]> {
       take: 5,
     });
 
-    return posts.map((post) => ({
+    return posts.map((post: any) => ({
       slug: post.slug,
       title: post.title,
       excerpt: post.excerpt || "",

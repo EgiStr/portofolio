@@ -1,5 +1,4 @@
-// Export Prisma Client instance and types
-import { PrismaClient } from "./generated/client";
+import { PrismaClient } from "@prisma/client";
 
 // Prevent multiple instances in development
 const globalForPrisma = globalThis as unknown as {
@@ -18,7 +17,7 @@ export const prisma =
 if (process.env.NODE_ENV !== "production") globalForPrisma.prisma = prisma;
 
 // Re-export all types from Prisma Client
-export * from "./generated/client";
+export * from "@prisma/client";
 
 // Export the prisma instance as default
 export default prisma;

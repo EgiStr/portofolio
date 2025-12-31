@@ -14,8 +14,8 @@ const inter = Inter({
 async function getSettings() {
   try {
     const configs = await prisma.siteConfig.findMany();
-    return configs.reduce<Record<string, any>>(
-      (acc: Record<string, any>, config: { key: string; value: string }) => {
+    return configs.reduce(
+      (acc: Record<string, any>, config: any) => {
         try {
           acc[config.key] = JSON.parse(config.value);
         } catch {
@@ -23,7 +23,7 @@ async function getSettings() {
         }
         return acc;
       },
-      {},
+      {} as Record<string, any>,
     );
   } catch (error) {
     console.error("Failed to fetch settings:", error);
