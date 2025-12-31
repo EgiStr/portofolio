@@ -68,7 +68,7 @@ export default function NewPostPage() {
         published: publish,
         tags: formData.tags
           .split(",")
-          .map((t) => t.trim())
+          .map((t: string) => t.trim())
           .filter(Boolean),
       };
 

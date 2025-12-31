@@ -107,7 +107,7 @@ export default function EditPostPage({ params }: EditPostPageProps) {
         published: newStatus,
         tags: formData.tags
           .split(",")
-          .map((t) => t.trim())
+          .map((t: string) => t.trim())
           .filter(Boolean),
       };
 
