@@ -27,7 +27,12 @@ async function testWrite() {
     console.log("Successfully deleted test project.");
   } catch (error) {
     console.error("Write test failed:", error);
-    if (error.code === "P2003") {
+    if (
+      error &&
+      typeof error === "object" &&
+      "code" in error &&
+      error.code === "P2003"
+    ) {
       console.log("Foreign key constraint failed. Need valid user ID.");
       // Try finding a user first
       const user = await prisma.user.findFirst();
