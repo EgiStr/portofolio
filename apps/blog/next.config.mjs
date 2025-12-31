@@ -1,4 +1,5 @@
 import createMDX from "@next/mdx";
+import { PrismaPlugin } from "@prisma/nextjs-monorepo-workaround-plugin";
 import rehypeSlug from "rehype-slug";
 import rehypeAutolinkHeadings from "rehype-autolink-headings";
 import remarkGfm from "remark-gfm";
@@ -14,6 +15,10 @@ const nextConfig = {
         hostname: "**",
       },
     ],
+  },
+  webpack: (config) => {
+    config.plugins.push(new PrismaPlugin());
+    return config;
   },
 };
 

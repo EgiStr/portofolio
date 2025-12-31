@@ -11,6 +11,7 @@
   "dependencies": {
     "@ecosystem/database": "workspace:*",
     "@ecosystem/ui": "workspace:*",
+    "@prisma/nextjs-monorepo-workaround-plugin": "^7.2.0",
     "framer-motion": "^11.11.0",
     "lucide-react": "^0.460.0",
     "next": "^15.1.0",
