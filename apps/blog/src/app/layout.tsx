@@ -15,7 +15,7 @@ async function getSettings() {
   try {
     const configs = await prisma.siteConfig.findMany();
     return configs.reduce<Record<string, any>>(
-      (acc: Record<string, any>, config) => {
+      (acc: Record<string, any>, config: { key: string; value: string }) => {
         try {
           acc[config.key] = JSON.parse(config.value);
         } catch {
