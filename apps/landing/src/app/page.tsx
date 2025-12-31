@@ -14,17 +14,14 @@ export const revalidate = 60; // Revalidate every 60 seconds
 async function getSettings() {
   try {
     const configs = await prisma.siteConfig.findMany();
-    return configs.reduce(
-      (acc, config) => {
-        try {
-          (acc as any)[config.key] = JSON.parse(config.value);
-        } catch {
-          (acc as any)[config.key] = config.value;
-        }
-        return acc;
-      },
-      {} as Record<string, any>,
-    );
+    return configs.reduce<Record<string, any>>((acc, config) => {
+      try {
+        acc[config.key] = JSON.parse(config.value);
+      } catch {
+        acc[config.key] = config.value;
+      }
+      return acc;
+    }, {});
   } catch (error) {
     console.error("Failed to fetch settings:", error);
     return {};
