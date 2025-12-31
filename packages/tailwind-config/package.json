@@ -1,0 +1,11 @@
+{
+  "name": "@ecosystem/tailwind-config",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "main": "tailwind.config.ts",
+  "dependencies": {
+    "tailwindcss": "^3.4.0",
+    "tailwindcss-animate": "^1.0.7"
+  }
+}
