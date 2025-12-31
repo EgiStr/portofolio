@@ -2,15 +2,20 @@ import { createClient } from "@supabase/supabase-js";
 
 // Create Supabase client for storage operations
 // Note: Using service role key for server-side operations
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || "";
+const supabaseUrl =
+  process.env.NEXT_PUBLIC_SUPABASE_URL || "https://placeholder.supabase.co";
 const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY || "";
 
-export const supabase = createClient(supabaseUrl, supabaseServiceKey, {
-  auth: {
-    autoRefreshToken: false,
-    persistSession: false,
+export const supabase = createClient(
+  supabaseUrl,
+  supabaseServiceKey || "placeholder",
+  {
+    auth: {
+      autoRefreshToken: false,
+      persistSession: false,
+    },
   },
-});
+);
 
 // Storage bucket names
 export const BUCKETS = {
