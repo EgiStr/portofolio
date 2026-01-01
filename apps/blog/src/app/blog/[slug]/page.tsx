@@ -5,11 +5,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { ShareButtons } from "@/components/share-buttons";
 import { prisma } from "@ecosystem/database";
-import { MDXRemote } from "next-mdx-remote/rsc";
-import remarkGfm from "remark-gfm";
-import rehypePrettyCode from "rehype-pretty-code";
-import rehypeSlug from "rehype-slug";
-import rehypeAutolinkHeadings from "rehype-autolink-headings";
+import { MarkdownContent } from "@/components/markdown-content";
 
 interface Post {
   slug: string;
@@ -141,56 +137,6 @@ function formatDate(dateString: string) {
   });
 }
 
-// MDX components
-const components = {
-  img: (props: any) => (
-    // eslint-disable-next-line @next/next/no-img-element
-    <img
-      {...props}
-      className="w-full h-auto rounded-xl my-8 shadow-md border border-border/50"
-      loading="lazy"
-    />
-  ),
-  a: (props: any) => (
-    <a
-      {...props}
-      className="text-primary hover:underline underline-offset-4 decoration-primary/30"
-      target={props.href?.startsWith("http") ? "_blank" : undefined}
-      rel={props.href?.startsWith("http") ? "noopener noreferrer" : undefined}
-    />
-  ),
-};
-
-const mdxOptions = {
-  mdxOptions: {
-    remarkPlugins: [remarkGfm],
-    rehypePlugins: [
-      rehypeSlug,
-      [
-        rehypeAutolinkHeadings,
-        {
-          behavior: "wrap",
-          properties: {
-            className: ["subheading-anchor"],
-          },
-        },
-      ],
-      [
-        rehypePrettyCode,
-        {
-          theme: "github-dark",
-          keepBackground: true,
-          onVisitLine(node: any) {
-            if (node.children.length === 0) {
-              node.children = [{ type: "text", value: " " }];
-            }
-          },
-        },
-      ],
-    ] as any,
-  },
-};
-
 export default async function BlogPostPage({ params }: PageProps) {
   const { slug } = await params;
   const post = await getPost(slug);
@@ -280,13 +226,7 @@ export default async function BlogPostPage({ params }: PageProps) {
       )}
 
       {/* Content */}
-      <div className="prose prose-invert max-w-none prose-headings:text-foreground prose-p:text-muted-foreground prose-a:text-primary prose-code:text-primary prose-pre:bg-[#0d1117] prose-pre:border prose-pre:border-border/50">
-        <MDXRemote
-          source={post.content}
-          components={components}
-          options={mdxOptions}
-        />
-      </div>
+      <MarkdownContent content={post.content} />
 
       {/* Share Buttons */}
       <div className="border-t border-border mt-12">
