@@ -5,6 +5,11 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { ShareButtons } from "@/components/share-buttons";
 import { prisma } from "@ecosystem/database";
+import { MDXRemote } from "next-mdx-remote/rsc";
+import remarkGfm from "remark-gfm";
+import rehypePrettyCode from "rehype-pretty-code";
+import rehypeSlug from "rehype-slug";
+import rehypeAutolinkHeadings from "rehype-autolink-headings";
 
 interface Post {
   slug: string;
@@ -136,55 +141,55 @@ function formatDate(dateString: string) {
   });
 }
 
-// Simple markdown to HTML converter for demo purposes
-function parseMarkdown(markdown: string): string {
-  return (
-    markdown
-      // Headers
-      .replace(
-        /^### (.*$)/gim,
-        '<h3 class="text-xl font-semibold mt-6 mb-3">$1</h3>',
-      )
-      .replace(
-        /^## (.*$)/gim,
-        '<h2 class="text-2xl font-semibold mt-8 mb-4">$1</h2>',
-      )
-      .replace(
-        /^# (.*$)/gim,
-        '<h1 class="text-3xl font-bold mt-8 mb-4">$1</h1>',
-      )
-      // Bold
-      .replace(/\*\*(.*)\*\*/gim, "<strong>$1</strong>")
-      // Italic
-      .replace(/\*(.*)\*/gim, "<em>$1</em>")
-      // Code blocks
-      .replace(
-        /```(\w+)?\n([\s\S]*?)```/gim,
-        '<pre class="bg-secondary p-4 rounded-lg overflow-x-auto my-4"><code>$2</code></pre>',
-      )
-      // Inline code
-      .replace(
-        /`([^`]+)`/gim,
-        '<code class="bg-secondary px-1.5 py-0.5 rounded text-sm">$1</code>',
-      )
-      // Images
-      .replace(
-        /!\[([^\]]*)\]\(([^)]+)\)/gim,
-        '<img src="$2" alt="$1" class="w-full h-auto rounded-lg my-8" />',
-      )
-      // Links
-      .replace(
-        /\[([^\]]+)\]\(([^)]+)\)/gim,
-        '<a href="$2" class="text-primary hover:underline">$1</a>',
-      )
-      // Lists
-      .replace(/^\- (.*$)/gim, '<li class="ml-4">$1</li>')
-      // Paragraphs
-      .replace(/\n\n/gim, '</p><p class="mb-4">')
-      // Line breaks
-      .replace(/\n/gim, "<br/>")
-  );
-}
+// MDX components
+const components = {
+  img: (props: any) => (
+    // eslint-disable-next-line @next/next/no-img-element
+    <img
+      {...props}
+      className="w-full h-auto rounded-xl my-8 shadow-md border border-border/50"
+      loading="lazy"
+    />
+  ),
+  a: (props: any) => (
+    <a
+      {...props}
+      className="text-primary hover:underline underline-offset-4 decoration-primary/30"
+      target={props.href?.startsWith("http") ? "_blank" : undefined}
+      rel={props.href?.startsWith("http") ? "noopener noreferrer" : undefined}
+    />
+  ),
+};
+
+const mdxOptions = {
+  mdxOptions: {
+    remarkPlugins: [remarkGfm],
+    rehypePlugins: [
+      rehypeSlug,
+      [
+        rehypeAutolinkHeadings,
+        {
+          behavior: "wrap",
+          properties: {
+            className: ["subheading-anchor"],
+          },
+        },
+      ],
+      [
+        rehypePrettyCode,
+        {
+          theme: "github-dark",
+          keepBackground: true,
+          onVisitLine(node: any) {
+            if (node.children.length === 0) {
+              node.children = [{ type: "text", value: " " }];
+            }
+          },
+        },
+      ],
+    ] as any,
+  },
+};
 
 export default async function BlogPostPage({ params }: PageProps) {
   const { slug } = await params;
@@ -275,12 +280,13 @@ export default async function BlogPostPage({ params }: PageProps) {
       )}
 
       {/* Content */}
-      <div
-        className="prose prose-invert max-w-none prose-headings:text-foreground prose-p:text-muted-foreground prose-a:text-primary prose-code:text-foreground prose-pre:bg-secondary"
-        dangerouslySetInnerHTML={{
-          __html: `<p class="mb-4">${parseMarkdown(post.content)}</p>`,
-        }}
-      />
+      <div className="prose prose-invert max-w-none prose-headings:text-foreground prose-p:text-muted-foreground prose-a:text-primary prose-code:text-primary prose-pre:bg-[#0d1117] prose-pre:border prose-pre:border-border/50">
+        <MDXRemote
+          source={post.content}
+          components={components}
+          options={mdxOptions}
+        />
+      </div>
 
       {/* Share Buttons */}
       <div className="border-t border-border mt-12">
