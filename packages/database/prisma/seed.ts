@@ -49,11 +49,11 @@ async function main() {
       value:
         "<p>Hello! I'm Eggi, a passionate full-stack developer based in Indonesia.</p>",
     },
-    { key: "email", value: "contact@eggisatria.dev" },
-    { key: "github", value: "https://github.com/eggisatria" },
+    { key: "email", value: "eggisatria2310@gmail.com" },
+    { key: "github", value: "https://github.com/EgiStr" },
     { key: "linkedin", value: "https://linkedin.com/in/eggisatria" },
-    { key: "twitter", value: "https://twitter.com/eggisatria" },
-    { key: "instagram", value: "https://instagram.com/eggisatria" },
+    { key: "twitter", value: "https://twitter.com/egistr" },
+    { key: "instagram", value: "https://instagram.com/_egistr" },
     { key: "resumeUrl", value: "/resume.pdf" },
     { key: "profileImage", value: "/eggisatria.png" },
   ];
@@ -129,7 +129,7 @@ async function main() {
         "A comprehensive dashboard for managing online stores, featuring real-time analytics and inventory management.",
       featured: true,
       imageUrl: "/projects/dashboard.png", // Placeholder, ensure this exists or use a remote URL
-      githubUrl: "https://github.com/eggisatria/dashboard",
+      githubUrl: "https://github.com/EgiStr/dashboard",
       liveUrl: "https://dashboard-demo.eggisatria.dev",
       status: "PUBLISHED",
       tags: ["Next.js", "TailwindCSS", "Prisma", "PostgreSQL"],
@@ -141,7 +141,7 @@ async function main() {
         "A social platform connecting developers, with features like code snippets sharing and pair programming requests.",
       featured: true,
       imageUrl: "/projects/social.png",
-      githubUrl: "https://github.com/eggisatria/social",
+      githubUrl: "https://github.com/EgiStr/social",
       liveUrl: "https://social-demo.eggisatria.dev",
       status: "PUBLISHED",
       tags: ["React", "Node.js", "Socket.io", "Redis"],
@@ -152,7 +152,7 @@ async function main() {
       description:
         "My first portfolio website built with simple HTML/CSS and JavaScript.",
       featured: false,
-      githubUrl: "https://github.com/eggisatria/portfolio-v1",
+      githubUrl: "https://github.com/EgiStr/portfolio-v1",
       status: "ARCHIVED",
       tags: ["HTML", "CSS", "JavaScript"],
     },

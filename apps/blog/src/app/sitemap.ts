@@ -28,7 +28,7 @@ async function getPosts(): Promise<Post[]> {
 }
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const baseUrl = "https://notes.eggisatria.dev";
+  const baseUrl = "https://blog.eggisatria.dev";
   const posts = await getPosts();
 
   const postUrls = posts.map((post) => ({

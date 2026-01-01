@@ -60,7 +60,7 @@ export const metadata: Metadata = {
     title: "Eggi Satria | Full Stack Developer",
     description:
       "Full Stack Developer passionate about building exceptional digital experiences.",
-    creator: "@eggisatria", // Assuming user might want this, or I can leave it generic
+    creator: "@egistr", // Updated handle
     images: ["/twitter-image.png"],
   },
   icons: {
@@ -84,9 +84,9 @@ export default function RootLayout({
     name: "Eggi Satria",
     url: "https://eggisatria.dev",
     sameAs: [
-      "https://github.com/eggisatria",
+      "https://github.com/EgiStr",
       "https://linkedin.com/in/eggisatria",
-      "https://twitter.com/eggisatria", // Add other social links if available
+      "https://twitter.com/_egistr", // Add other social links if available
     ],
     jobTitle: "Full Stack Developer",
     worksFor: {

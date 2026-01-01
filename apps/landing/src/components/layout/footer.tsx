@@ -1,7 +1,7 @@
 import { Github, Linkedin, Mail, Heart } from "lucide-react";
 
 const socialLinks = [
-  { name: "GitHub", href: "https://github.com/eggisatria", icon: Github },
+  { name: "GitHub", href: "https://github.com/EgiStr", icon: Github },
   {
     name: "LinkedIn",
     href: "https://linkedin.com/in/eggisatria",
@@ -33,7 +33,7 @@ export function Footer() {
         {/* Credits */}
         <div className="text-center">
           <a
-            href="https://github.com/eggisatria/ecosystem"
+            href="https://github.com/EgiStr/portofolio"
             target="_blank"
             rel="noopener noreferrer"
             className="text-sm text-foreground/70 hover:text-primary transition-colors"
@@ -69,11 +69,11 @@ export function Footer() {
       {/* Side Email - Desktop Only */}
       <div className="hidden md:flex fixed bottom-0 right-8 flex-col items-center gap-6">
         <a
-          href="mailto:hello@egisatria.dev"
+          href="mailto:eggisatria2310@gmail.com"
           className="text-foreground/70 hover:text-primary hover:-translate-y-1 transition-all text-xs tracking-widest"
           style={{ writingMode: "vertical-rl" }}
         >
-          hello@egisatria.dev
+          eggisatria2310@gmail.com
         </a>
         <div className="w-px h-24 bg-foreground/20" />
       </div>
