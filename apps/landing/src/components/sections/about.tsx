@@ -51,7 +51,7 @@ export function About({ description, skills = [], profileImage }: AboutProps) {
           <div className="flex-1 h-px bg-border ml-4" />
         </motion.div>
 
-        <div className="grid lg:grid-cols-3 gap-12">
+        <div className="grid lg:grid-cols-3 gap-12 items-start">
           {/* Text Content */}
           <motion.div
             variants={itemVariants}

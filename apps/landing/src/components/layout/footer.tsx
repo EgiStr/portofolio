@@ -36,13 +36,13 @@ export function Footer() {
             href="https://github.com/EgiStr/portofolio"
             target="_blank"
             rel="noopener noreferrer"
-            className="text-sm text-foreground/70 hover:text-primary transition-colors"
+            className="text-sm text-primary/70 hover:text-primary transition-colors"
           >
             <p className="flex items-center justify-center gap-1">
-              Built with <Heart className="w-4 h-4 text-primary fill-primary/20" /> by Eggi
+              Built with <Heart className="w-4 h-4 text-primary fill-primary/40" /> by Eggi
               Satria
             </p>
-            <p className="text-xs mt-1 text-foreground/50">
+            <p className="text-xs mt-1 text-primary/60">
               Design inspired by Brittany Chiang
             </p>
           </a>

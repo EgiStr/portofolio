@@ -213,7 +213,7 @@ export function Projects({ initialProjects }: { initialProjects?: Project[] }) {
         {/* Other Projects */}
         <motion.div variants={itemVariants}>
           <h3 className="text-2xl font-bold text-foreground text-center mb-8">
-            Other Noteworthy Projects
+            Other EgiStr Projects
           </h3>
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
             {otherProjects.map((project) => (
