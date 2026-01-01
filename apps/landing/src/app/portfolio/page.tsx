@@ -258,9 +258,9 @@ export default function PortfolioPage() {
         >
           {[
             { label: "Projects Completed", value: projects.length || "25+" },
-            { label: "Years Experience", value: "4+" },
+            { label: "Years Experience", value: "3+" },
             { label: "Technologies Used", value: "20+" },
-            { label: "GitHub Stars", value: "500+" },
+            { label: "GitHub Stars", value: "20+" },
           ].map((stat) => (
             <div
               key={stat.label}

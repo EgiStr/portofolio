@@ -89,7 +89,7 @@ export default async function RootLayout({
 }>) {
   const settings = await getSettings();
   const name = settings.name || "Eggi Satria";
-  // const websiteUrl = settings.websiteUrl || 'https://eggisatria.dev'; // Assuming this might be added later
+  const websiteUrl = settings.websiteUrl || "https://eggisatria.dev"; // Assuming this might be added later
 
   return (
     <html lang="en" className="dark">
@@ -132,12 +132,12 @@ export default async function RootLayout({
               <p>
                 © {new Date().getFullYear()} {name}
               </p>
-              {/* <Link
+              <Link
                 href={websiteUrl}
                 className="hover:text-primary transition-colors"
               >
                 {name}
-              </Link> */}
+              </Link>
             </div>
           </footer>
           <Toaster />
