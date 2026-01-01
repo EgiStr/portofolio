@@ -3,10 +3,13 @@ export const dynamic = "force-dynamic";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { supabase, generateFilename, BUCKETS } from "@/lib/supabase";
+import sharp from "sharp";
 
 // Allowed file types
 const ALLOWED_TYPES = ["image/jpeg", "image/png", "image/webp", "image/gif"];
-const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
+const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB input limit
+const TARGET_SIZE = 1 * 1024 * 1024; // 1MB target output
+const MAX_WIDTH = 1920;
 
 export async function POST(request: NextRequest) {
   try {
@@ -37,23 +40,44 @@ export async function POST(request: NextRequest) {
     // Validate file size
     if (file.size > MAX_FILE_SIZE) {
       return NextResponse.json(
-        { error: "File too large. Maximum size: 5MB" },
+        { error: "File too large. Maximum size: 10MB" },
         { status: 400 },
       );
     }
 
-    // Generate unique filename
-    const filename = generateFilename(file.name);
+    // Get file buffer
+    const arrayBuffer = await file.arrayBuffer();
+    let buffer = Buffer.from(arrayBuffer);
+
+    // Compress image using sharp
+    let quality = 80;
+    let optimizedBuffer: Buffer;
+
+    // Initial compression pass
+    optimizedBuffer = await sharp(buffer)
+      .resize({ width: MAX_WIDTH, withoutEnlargement: true })
+      .webp({ quality })
+      .toBuffer();
+
+    // If still over 1MB, reduce quality iteratively
+    while (optimizedBuffer.length > TARGET_SIZE && quality > 20) {
+      quality -= 10;
+      optimizedBuffer = await sharp(buffer)
+        .resize({ width: MAX_WIDTH, withoutEnlargement: true })
+        .webp({ quality })
+        .toBuffer();
+    }
+
+    // Generate unique filename with .webp extension
+    const originalName = file.name.replace(/\.[^/.]+$/, "") + ".webp";
+    const filename = generateFilename(originalName);
     const path = folder ? `${folder}/${filename}` : filename;
 
     // Upload to Supabase Storage
-    const arrayBuffer = await file.arrayBuffer();
-    const buffer = Buffer.from(arrayBuffer);
-
     const { error: uploadError } = await supabase.storage
       .from(bucket)
-      .upload(path, buffer, {
-        contentType: file.type,
+      .upload(path, optimizedBuffer, {
+        contentType: "image/webp",
         cacheControl: "3600",
         upsert: false,
       });
@@ -73,6 +97,8 @@ export async function POST(request: NextRequest) {
       path: path,
       filename: filename,
       bucket: bucket,
+      originalSize: file.size,
+      compressedSize: optimizedBuffer.length,
     });
   } catch (error) {
     console.error("Upload error:", error);
