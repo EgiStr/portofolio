@@ -25,7 +25,7 @@ The project follows a monorepo structure to share code and configuration across 
 | Application | Path | Domain | Description |
 |------------|------|--------|-------------|
 | **Landing** | `apps/landing` | `eggisatria.dev` | Personal portfolio and landing page. |
-| **Blog** | `apps/blog` | `notes.eggisatria.dev` | Technical blog and knowledge base. |
+| **Blog** | `apps/blog` | `blog.eggisatria.dev` | Technical blog and knowledge base. |
 | **Manager** | `apps/manager` | `manager.eggisatria.dev` | Admin dashboard for content management. |
 
 ### Shared Packages
