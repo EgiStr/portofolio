@@ -42,12 +42,14 @@ export function Navbar() {
           {/* Logo */}
           <Link
             href="/"
-            className="relative w-10 h-10 hover:opacity-80 transition-opacity"
+            className="hover:opacity-80 transition-opacity"
+            aria-label="Home"
           >
             <NextImage
               src="/logo.png"
               alt="Eggi Satria Logo"
-              fill
+              width={40}
+              height={40}
               className="object-contain"
               priority
             />

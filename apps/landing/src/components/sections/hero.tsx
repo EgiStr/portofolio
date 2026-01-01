@@ -110,20 +110,20 @@ export function Hero({
         </motion.p>
 
         {/* Name/Title */}
-        <motion.h1
-          variants={itemVariants}
-          className="text-4xl md:text-6xl lg:text-7xl font-bold text-foreground mb-2"
+        <h1
+          className="text-4xl md:text-6xl lg:text-7xl font-bold text-foreground mb-2 animate-fade-in-up"
+          style={{ animationDelay: "0.1s" }}
         >
           {heroTitle}
-        </motion.h1>
+        </h1>
 
-        {/* Subtitle */}
-        <motion.h2
-          variants={itemVariants}
-          className="text-3xl md:text-5xl lg:text-6xl font-bold text-muted-foreground mb-6"
+        {/* Subtitle - LCP Element */}
+        <h2
+          className="text-3xl md:text-5xl lg:text-6xl font-bold text-muted-foreground mb-6 animate-fade-in-up"
+          style={{ animationDelay: "0.2s" }}
         >
           {heroSubtitle}
-        </motion.h2>
+        </h2>
 
         {/* Description */}
         <motion.p

@@ -232,6 +232,7 @@ export function Projects({ initialProjects }: { initialProjects?: Project[] }) {
                         target="_blank"
                         rel="noopener noreferrer"
                         className="text-muted-foreground hover:text-primary transition-colors"
+                        aria-label={`GitHub Repository for ${project.title}`}
                         onClick={() => handleProjectClick(project.id)}
                       >
                         <Github className="w-5 h-5" />
@@ -243,6 +244,7 @@ export function Projects({ initialProjects }: { initialProjects?: Project[] }) {
                         target="_blank"
                         rel="noopener noreferrer"
                         className="text-muted-foreground hover:text-primary transition-colors"
+                        aria-label={`Live Demo for ${project.title}`}
                         onClick={() => handleProjectClick(project.id)}
                       >
                         <ExternalLink className="w-5 h-5" />

@@ -1,15 +1,27 @@
+import dynamic from "next/dynamic";
 import { Navbar } from "@/components/layout/navbar";
 import { Footer } from "@/components/layout/footer";
 import { Hero } from "@/components/sections/hero";
 import { About } from "@/components/sections/about";
-import { Experience } from "@/components/sections/experience";
-import { Projects } from "@/components/sections/projects";
-import { Contact } from "@/components/sections/contact";
 import { Spotlight, GridBackground } from "@/components/ui/spotlight";
 import { prisma } from "@ecosystem/database";
 import type { Metadata } from "next";
 
-export const dynamic = "force-dynamic";
+// Lazy load below-fold components to reduce initial bundle
+const Experience = dynamic(
+  () =>
+    import("@/components/sections/experience").then((mod) => mod.Experience),
+  { ssr: true },
+);
+const Projects = dynamic(
+  () => import("@/components/sections/projects").then((mod) => mod.Projects),
+  { ssr: true },
+);
+const Contact = dynamic(
+  () => import("@/components/sections/contact").then((mod) => mod.Contact),
+  { ssr: true },
+);
+
 export const revalidate = 60; // Revalidate every 60 seconds
 
 export async function generateMetadata(): Promise<Metadata> {

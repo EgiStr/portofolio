@@ -1,12 +1,14 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import Link from "next/link";
+import NextImage from "next/image";
 import "./globals.css";
 import { prisma } from "@ecosystem/database";
 import { Toaster } from "sonner";
 
 const inter = Inter({
   subsets: ["latin"],
+  display: "swap",
   variable: "--font-sans",
 });
 
@@ -33,13 +35,13 @@ async function getSettings() {
 
 export async function generateMetadata(): Promise<Metadata> {
   const settings = await getSettings();
-  const title = settings.blogTitle || "Notes | Eggi Satria";
+  const title = settings.blogTitle || "Blog | Eggi Satria";
   const description =
     settings.blogDescription ||
     "Thoughts on software development, design, and technology.";
 
   return {
-    metadataBase: new URL("https://notes.eggisatria.dev"),
+    metadataBase: new URL("https://blog.eggisatria.dev"),
     title: {
       default: title,
       template: `%s | ${title}`,
@@ -52,7 +54,7 @@ export async function generateMetadata(): Promise<Metadata> {
     openGraph: {
       type: "website",
       locale: "en_US",
-      url: "https://notes.eggisatria.dev",
+      url: "https://blog.eggisatria.dev",
       title,
       description,
       siteName: title,
@@ -99,10 +101,13 @@ export default async function RootLayout({
               href="/"
               className="flex items-center gap-2 hover:opacity-80 transition-opacity"
             >
-              <img
+              <NextImage
                 src="/logo.png"
                 alt="Eggi Satria Logo"
+                width={48}
+                height={32}
                 className="h-8 w-auto"
+                priority
               />
             </Link>
             <nav className="flex items-center gap-6">
