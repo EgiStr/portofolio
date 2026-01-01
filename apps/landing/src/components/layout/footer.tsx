@@ -7,7 +7,7 @@ const socialLinks = [
     href: "https://linkedin.com/in/eggisatria",
     icon: Linkedin,
   },
-  { name: "Email", href: "mailto:hello@eggisatria.dev", icon: Mail },
+  { name: "Email", href: "mailto:eggisatria2310@gmail.com", icon: Mail },
 ];
 
 export function Footer() {

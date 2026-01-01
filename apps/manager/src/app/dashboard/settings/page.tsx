@@ -64,11 +64,11 @@ interface Settings {
 
 const defaultSettings: Settings = {
   name: "Eggi Satria",
-  email: "hello@eggisatria.dev",
+  email: "eggisatria2310@gmail.com",
   bio: "Full Stack Developer passionate about building exceptional digital experiences.",
   avatar: "",
   location: "Indonesia",
-  phone: "",
+  phone: "081302691577",
 
   heroTitle: "Hi, I'm Eggi",
   heroSubtitle: "Full Stack Developer",
@@ -79,17 +79,17 @@ const defaultSettings: Settings = {
     "A passionate developer with experience in building modern web applications.",
   resumeUrl: "",
 
-  blogTitle: "Notes",
+  blogTitle: "Blog",
   blogDescription: "Thoughts on software development, design, and technology.",
   postsPerPage: 10,
   showReadingTime: true,
   showViewCount: true,
 
-  twitter: "@eggisatria",
-  github: "eggisatria",
+  twitter: "@egistr",
+  github: "EgiStr",
   linkedin: "eggisatria",
-  instagram: "",
-  youtube: "",
+  instagram: "@_egistr",
+  youtube: "eggisatria",
 
   siteTitle: "Eggi Satria | Full Stack Developer",
   siteDescription:

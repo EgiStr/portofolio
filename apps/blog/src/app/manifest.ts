@@ -2,8 +2,8 @@ import { MetadataRoute } from "next";
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: "Eggi Satria Notes",
-    short_name: "ES Notes",
+    name: "Eggi Satria blog",
+    short_name: "ES Blog",
     description: "Thoughts on software development, design, and technology.",
     start_url: "/",
     display: "standalone",

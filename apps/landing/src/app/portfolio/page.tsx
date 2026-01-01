@@ -285,7 +285,7 @@ export default function PortfolioPage() {
             Interested in working together?
           </p>
           <a
-            href="mailto:hello@eggisatria.dev"
+            href="mailto:eggisatria2310@gmail.com"
             className="inline-flex items-center gap-2 px-6 py-3 rounded-lg border border-primary text-primary hover:bg-primary hover:text-primary-foreground transition-all duration-300"
           >
             Get In Touch

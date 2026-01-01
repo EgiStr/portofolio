@@ -47,7 +47,7 @@ export default function AboutPage() {
           portfolio
         </li>
         <li>
-          <a href="https://notes.eggisatria.dev">notes.eggisatria.dev</a> — This
+          <a href="https://blog.eggisatria.dev">blog.eggisatria.dev</a> — This
           blog (you are here!)
         </li>
         <li>manager.eggisatria.dev — Content management system</li>
@@ -60,10 +60,10 @@ export default function AboutPage() {
       </p>
       <ul>
         <li>
-          Email: <a href="mailto:hello@eggisatria.dev">hello@eggisatria.dev</a>
+          Email: <a href="mailto:eggisatria2310@gmail.com">eggisatria2310@gmail.com</a>
         </li>
         <li>
-          GitHub: <a href="https://github.com/eggisatria">@eggisatria</a>
+          GitHub: <a href="https://github.com/EgiStr">@EgiStr</a>
         </li>
         <li>
           LinkedIn: <a href="https://linkedin.com/in/eggisatria">@eggisatria</a>

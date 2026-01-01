@@ -28,7 +28,7 @@ export async function GET(request: NextRequest) {
     const defaultConfig = {
       // Profile
       name: "Eggi Satria",
-      email: "hello@eggisatria.dev",
+      email: "eggisatria2310@gmail.com",
       bio: "Full Stack Developer passionate about building exceptional digital experiences.",
       avatar: "",
       location: "Indonesia",
@@ -45,7 +45,7 @@ export async function GET(request: NextRequest) {
       resumeUrl: "",
 
       // Blog
-      blogTitle: "Notes",
+      blogTitle: "Blog",
       blogDescription:
         "Thoughts on software development, design, and technology.",
       postsPerPage: 10,
@@ -56,8 +56,8 @@ export async function GET(request: NextRequest) {
       twitter: "@eggisatria",
       github: "eggisatria",
       linkedin: "eggisatria",
-      instagram: "",
-      youtube: "",
+      instagram: "@_egistr",
+      youtube: "eggisatria",
 
       // SEO
       siteTitle: "Eggi Satria | Full Stack Developer",

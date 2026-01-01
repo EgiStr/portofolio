@@ -58,7 +58,7 @@ export function Contact() {
 
         <motion.div variants={itemVariants}>
           <a
-            href="mailto:hello@eggisatria.dev"
+            href="mailto:eggisatria2310@gmail.com"
             className="inline-flex items-center gap-2 px-8 py-4 rounded-lg border border-primary text-primary hover:bg-primary hover:text-primary-foreground transition-all duration-300 text-lg font-medium"
           >
             <Mail className="w-5 h-5" />
