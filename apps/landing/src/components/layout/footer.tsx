@@ -22,7 +22,7 @@ export function Footer() {
               href={link.href}
               target="_blank"
               rel="noopener noreferrer"
-              className="text-muted-foreground hover:text-primary transition-colors"
+              className="text-foreground/70 hover:text-primary transition-colors"
               aria-label={link.name}
             >
               <link.icon className="w-5 h-5" />
@@ -36,13 +36,13 @@ export function Footer() {
             href="https://github.com/eggisatria/ecosystem"
             target="_blank"
             rel="noopener noreferrer"
-            className="text-sm text-muted-foreground hover:text-primary transition-colors"
+            className="text-sm text-foreground/70 hover:text-primary transition-colors"
           >
             <p className="flex items-center justify-center gap-1">
-              Built with <Heart className="w-4 h-4 text-primary" /> by Eggi
+              Built with <Heart className="w-4 h-4 text-primary fill-primary/20" /> by Eggi
               Satria
             </p>
-            <p className="text-xs mt-1 text-muted-foreground/80">
+            <p className="text-xs mt-1 text-foreground/50">
               Design inspired by Brittany Chiang
             </p>
           </a>
@@ -57,25 +57,25 @@ export function Footer() {
             href={link.href}
             target="_blank"
             rel="noopener noreferrer"
-            className="text-muted-foreground hover:text-primary hover:-translate-y-1 transition-all"
+            className="text-foreground/70 hover:text-primary hover:-translate-y-1 transition-all"
             aria-label={link.name}
           >
             <link.icon className="w-5 h-5" />
           </a>
         ))}
-        <div className="w-px h-24 bg-muted-foreground/30" />
+        <div className="w-px h-24 bg-foreground/20" />
       </div>
 
       {/* Side Email - Desktop Only */}
       <div className="hidden md:flex fixed bottom-0 right-8 flex-col items-center gap-6">
         <a
-          href="mailto:hello@eggisatria.dev"
-          className="text-muted-foreground hover:text-primary hover:-translate-y-1 transition-all text-xs tracking-widest"
+          href="mailto:hello@egisatria.dev"
+          className="text-foreground/70 hover:text-primary hover:-translate-y-1 transition-all text-xs tracking-widest"
           style={{ writingMode: "vertical-rl" }}
         >
-          hello@eggisatria.dev
+          hello@egisatria.dev
         </a>
-        <div className="w-px h-24 bg-muted-foreground/30" />
+        <div className="w-px h-24 bg-foreground/20" />
       </div>
     </footer>
   );

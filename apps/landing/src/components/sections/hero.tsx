@@ -146,7 +146,7 @@ export function Hero({
             <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
           </Link>
           <Link
-            href="https://notes.eggisatria.dev"
+            href="https://blog.eggisatria.dev"
             className="group inline-flex items-center justify-center gap-2 px-6 py-3 rounded-lg bg-secondary text-secondary-foreground hover:bg-secondary/80 transition-all duration-300"
           >
             Read My Blog
