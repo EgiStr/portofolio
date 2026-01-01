@@ -37,17 +37,17 @@ async function main() {
 
   // 3. Site Configuration
   const siteConfigs = [
-    { key: "heroTitle", value: "Full Stack Developer" },
-    { key: "heroSubtitle", value: "Building Digital Experiences" },
+    { key: "heroTitle", value: "Data Engineer" },
+    { key: "heroSubtitle", value: "Engineering Data & Building Software" },
     {
       key: "heroDescription",
       value:
-        "I build accessible, pixel-perfect, performant, and reliable web applications.",
+        "I'm a Data Engineer who loves building software. I write about engineering data pipelines, automating workflows, and building intelligent systems.",
     },
     {
       key: "aboutDescription",
       value:
-        "<p>Hello! I'm Eggi, a passionate full-stack developer based in Indonesia.</p>",
+        "<p>Hi, I'm Eggi Satria — a Data Engineer based in Indonesia who loves building software. I enjoy engineering robust data systems and developing the applications that make that data useful.</p>",
     },
     { key: "email", value: "eggisatria2310@gmail.com" },
     { key: "github", value: "https://github.com/EgiStr" },

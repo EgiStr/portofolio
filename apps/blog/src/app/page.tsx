@@ -56,9 +56,9 @@ export default async function HomePage() {
           hey, I&apos;m Eggi 👋
         </h1>
         <p className="text-muted-foreground text-lg leading-relaxed">
-          I&apos;m a full-stack developer who loves building for the web. I
-          write about software development, design patterns, and the tools I use
-          to ship products.
+          I&apos;m a Data Engineer who loves building software. I write about
+          engineering data pipelines, automating workflows, and the tech stack I
+          use to build intelligent systems.
         </p>
       </section>
 

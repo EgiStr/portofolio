@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 
 export const metadata: Metadata = {
   title: "About",
-  description: "Learn more about Eggi Satria - Full Stack Developer.",
+  description: "Learn more about Eggi Satria - Data Engineer.",
 };
 
 export default function AboutPage() {
@@ -11,28 +11,35 @@ export default function AboutPage() {
       <h1>About Me</h1>
 
       <p>
-        Hi, I&apos;m <strong>Eggi Satria</strong> — a full-stack developer based
-        in Indonesia. I enjoy building things for the web and writing about what
-        I learn along the way.
+        Hi, I&apos;m <strong>Eggi Satria</strong> — a Data Engineer based in
+        Indonesia who loves building software. I enjoy engineering robust data
+        systems and developing the applications that make that data useful.
       </p>
 
       <h2>What I Do</h2>
       <p>
-        I specialize in building web applications with modern technologies like
-        React, Next.js, TypeScript, and Node.js. I&apos;m passionate about
-        creating user experiences that are both beautiful and performant.
+        While my main focus is Data Engineering, I don&apos;t just stop at
+        pipelines and databases. I am passionate about building full-stack
+        software that brings data to life.
+      </p>
+
+      <p>
+        I specialize in creating end-to-end solutions—combining efficient data
+        architectures with modern web technologies. Whether it&apos;s
+        automating a workflow or building a dashboard from scratch, I love the
+        process of turning raw ideas into working software.
       </p>
 
       <h2>My Stack</h2>
       <ul>
         <li>
-          <strong>Frontend:</strong> React, Next.js, TypeScript, Tailwind CSS
+          <strong>Data & AI:</strong> Python, SQL, YOLOv8, Pandas
         </li>
         <li>
-          <strong>Backend:</strong> Node.js, Express, PostgreSQL, Prisma
+          <strong>Software Development:</strong> Next.js, TypeScript, Tailwind CSS
         </li>
         <li>
-          <strong>Tools:</strong> Git, Docker, VS Code, Figma
+          <strong>Infrastructure:</strong> Docker, PostgreSQL, Linux (VPS)
         </li>
       </ul>
 

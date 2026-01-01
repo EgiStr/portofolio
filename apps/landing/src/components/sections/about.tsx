@@ -66,14 +66,15 @@ export function About({ description, skills = [], profileImage }: AboutProps) {
               // Fallback content in case DB is empty
               <>
                 <p className="text-muted-foreground leading-relaxed">
-                  Hello! I&apos;m Eggi, a passionate full-stack developer based
-                  in Indonesia. I enjoy creating things that live on the
-                  internet, whether that be websites, applications, or anything
-                  in between.
+                  Hi, I&apos;m Eggi Satria — a Data Engineer based in
+                  Indonesia who loves building software. I enjoy engineering
+                  robust data systems and developing the applications that make
+                  that data useful.
                 </p>
                 <p className="text-muted-foreground leading-relaxed">
-                  My goal is to always build products that provide
-                  pixel-perfect, performant experiences.
+                  While my main focus is Data Engineering, I don&apos;t just
+                  stop at pipelines and databases. I am passionate about
+                  building full-stack software that brings data to life.
                 </p>
               </>
             )}
