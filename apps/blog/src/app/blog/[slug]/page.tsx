@@ -90,7 +90,8 @@ export async function generateMetadata({
     };
   }
 
-  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3001";
+  const baseUrl =
+    process.env.NEXT_PUBLIC_SITE_URL || "https://blog.eggisatria.dev";
   const url = `${baseUrl}/blog/${post.slug}`;
   const ogImage =
     post.coverImage ||
@@ -145,7 +146,8 @@ export default async function BlogPostPage({ params }: PageProps) {
     notFound();
   }
 
-  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3001";
+  const baseUrl =
+    process.env.NEXT_PUBLIC_SITE_URL || "https://blog.eggisatria.dev";
 
   const jsonLd = {
     "@context": "https://schema.org",
