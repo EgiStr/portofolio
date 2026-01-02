@@ -50,3 +50,29 @@
   background: hsl(var(--muted));
   border-radius: 3px;
 }
+
+@media print {
+  @page {
+    size: A4;
+    margin: 20mm;
+  }
+  
+  body {
+    background: white;
+  }
+
+  /* React-to-print handles the visibility, so we just focus on styling the content */
+  .print-container {
+    padding: 0 !important;
+  }
+
+  /* Typography for print */
+  h1 { font-size: 24pt; margin-bottom: 0.5em; page-break-after: avoid; }
+  h2 { font-size: 16pt; margin-top: 1em; margin-bottom: 0.5em; border-bottom: 1px solid #ddd; page-break-after: avoid; }
+  h3 { font-size: 12pt; margin-top: 0.8em; margin-bottom: 0.3em; page-break-after: avoid; }
+  p, li { font-size: 10pt; line-height: 1.5; }
+  a { text-decoration: none; color: black !important; }
+  
+  /* Avoid breaking elements */
+  li, p, h3 {  page-break-inside: avoid; }
+}

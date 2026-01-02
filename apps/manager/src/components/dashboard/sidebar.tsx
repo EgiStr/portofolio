@@ -13,6 +13,7 @@ import {
   User,
   Briefcase,
   Code,
+  Scroll,
 } from "lucide-react";
 import { Button } from "@ecosystem/ui";
 
@@ -22,6 +23,7 @@ const sidebarLinks = [
   { name: "Blog Posts", href: "/dashboard/posts", icon: FileText },
   { name: "Experience", href: "/dashboard/experiences", icon: Briefcase },
   { name: "Skills", href: "/dashboard/skills", icon: Code },
+  { name: "Resume", href: "/dashboard/resume", icon: Scroll },
   { name: "Analytics", href: "/dashboard/analytics", icon: BarChart3 },
   { name: "Settings", href: "/dashboard/settings", icon: Settings },
 ];
