@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
+import Script from "next/script";
 import "./globals.css";
 import { prisma } from "@ecosystem/database";
 
@@ -116,6 +117,7 @@ export default async function RootLayout({
   const description =
     settings.heroDescription ||
     "Full Stack Developer passionate about building exceptional digital experiences.";
+  const gaId = settings.googleAnalyticsId || "";
 
   const jsonLd = {
     "@context": "https://schema.org",
@@ -145,6 +147,23 @@ export default async function RootLayout({
   return (
     <html lang="en" className="dark">
       <body className={`${inter.variable} font-sans`}>
+        {/* Google Analytics */}
+        {gaId && (gaId.startsWith("G-") || gaId.startsWith("GT-")) && (
+          <>
+            <Script
+              src={`https://www.googletagmanager.com/gtag/js?id=${gaId}`}
+              strategy="afterInteractive"
+            />
+            <Script id="google-analytics" strategy="afterInteractive">
+              {`
+                window.dataLayer = window.dataLayer || [];
+                function gtag(){dataLayer.push(arguments);}
+                gtag('js', new Date());
+                gtag('config', '${gaId}');
+              `}
+            </Script>
+          </>
+        )}
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}

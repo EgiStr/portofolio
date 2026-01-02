@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import Link from "next/link";
 import NextImage from "next/image";
+import Script from "next/script";
 import "./globals.css";
 import { prisma } from "@ecosystem/database";
 import { Toaster } from "sonner";
@@ -89,11 +90,29 @@ export default async function RootLayout({
 }>) {
   const settings = await getSettings();
   const name = settings.name || "Eggi Satria";
-  const websiteUrl = settings.websiteUrl || "https://eggisatria.dev"; // Assuming this might be added later
+  const websiteUrl = settings.websiteUrl || "https://eggisatria.dev";
+  const gaId = settings.googleAnalyticsId || "";
 
   return (
     <html lang="en" className="dark">
       <body className={`${inter.variable} font-sans min-h-screen`}>
+        {/* Google Analytics */}
+        {gaId && (gaId.startsWith("G-") || gaId.startsWith("GT-")) && (
+          <>
+            <Script
+              src={`https://www.googletagmanager.com/gtag/js?id=${gaId}`}
+              strategy="afterInteractive"
+            />
+            <Script id="google-analytics" strategy="afterInteractive">
+              {`
+                window.dataLayer = window.dataLayer || [];
+                function gtag(){dataLayer.push(arguments);}
+                gtag('js', new Date());
+                gtag('config', '${gaId}');
+              `}
+            </Script>
+          </>
+        )}
         <div className="max-w-2xl mx-auto px-4 py-8">
           {/* Navigation */}
           <header className="flex items-center justify-between mb-16">
