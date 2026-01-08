@@ -208,9 +208,9 @@ export default async function Home() {
           skills={skills}
           profileImage="/eggisatria.png"
         />
+        <Projects initialProjects={projects as any} />
         <Experience experiences={experiences} />
         <Certifications certifications={certifications as any} />
-        <Projects initialProjects={projects as any} />
         <Contact
         // email={settings.email}
         // socialLinks={heroProps.socialLinks}

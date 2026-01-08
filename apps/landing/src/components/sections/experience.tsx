@@ -56,7 +56,7 @@ export function Experience({ experiences = [] }: ExperienceProps) {
           variants={itemVariants}
           className="flex items-center gap-4 mb-12"
         >
-          <span className="text-primary font-mono text-lg">02.</span>
+          <span className="text-primary font-mono text-lg">03.</span>
           <h2 className="text-2xl md:text-3xl font-bold text-foreground">
             Where I&apos;ve Worked
           </h2>

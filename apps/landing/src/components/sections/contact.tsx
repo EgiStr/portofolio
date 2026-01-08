@@ -36,7 +36,7 @@ export function Contact() {
         {/* Section Title */}
         <motion.div variants={itemVariants} className="mb-4">
           <span className="text-primary font-mono text-lg">
-            04. What&apos;s Next?
+            05. What&apos;s Next?
           </span>
         </motion.div>
 
