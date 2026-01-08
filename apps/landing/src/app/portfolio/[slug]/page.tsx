@@ -35,7 +35,7 @@ export async function generateMetadata({
 
   const project = await prisma.project.findUnique({
     where: { slug },
-    include: { techStack: true },
+    include: { techStack: true, author: { select: { name: true } } },
   });
 
   if (!project) {
@@ -44,6 +44,9 @@ export async function generateMetadata({
     };
   }
 
+  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://eggisatria.dev";
+  const url = `${baseUrl}/portfolio/${project.slug}`;
+  const ogImage = project.imageUrl || `${baseUrl}/opengraph-image.png`;
   const description = project.description.slice(0, 160);
   const keywords = project.techStack.map((t) => t.name).join(", ");
 
@@ -51,30 +54,31 @@ export async function generateMetadata({
     title: project.title,
     description,
     keywords: keywords || undefined,
+    authors: project.author ? [{ name: project.author.name }] : undefined,
+    alternates: {
+      canonical: url,
+    },
     openGraph: {
       title: project.title,
       description,
       type: "article",
-      url: `/portfolio/${project.slug}`,
-      images: project.imageUrl
-        ? [
-            {
-              url: project.imageUrl,
-              width: 1200,
-              height: 630,
-              alt: project.title,
-            },
-          ]
-        : undefined,
+      url,
+      images: [
+        {
+          url: ogImage,
+          width: 1200,
+          height: 630,
+          alt: project.title,
+        },
+      ],
+      authors: project.author ? [project.author.name] : undefined,
+      tags: project.techStack.map((t) => t.name),
     },
     twitter: {
       card: "summary_large_image",
       title: project.title,
       description,
-      images: project.imageUrl ? [project.imageUrl] : undefined,
-    },
-    alternates: {
-      canonical: `/portfolio/${project.slug}`,
+      images: [ogImage],
     },
   };
 }
