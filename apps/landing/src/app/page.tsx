@@ -17,6 +17,13 @@ const Projects = dynamic(
   () => import("@/components/sections/projects").then((mod) => mod.Projects),
   { ssr: true },
 );
+const Certifications = dynamic(
+  () =>
+    import("@/components/sections/certifications").then(
+      (mod) => mod.Certifications,
+    ),
+  { ssr: true },
+);
 const Contact = dynamic(
   () => import("@/components/sections/contact").then((mod) => mod.Contact),
   { ssr: true },
@@ -145,13 +152,34 @@ async function getProjects() {
   }
 }
 
+async function getCertifications() {
+  try {
+    const certifications = await prisma.certification.findMany({
+      include: {
+        skills: {
+          include: {
+            skill: true,
+          },
+        },
+      },
+      orderBy: { displayOrder: "asc" },
+    });
+    return certifications;
+  } catch (error) {
+    console.error("Failed to fetch certifications:", error);
+    return [];
+  }
+}
+
 export default async function Home() {
-  const [settings, skills, experiences, projects] = await Promise.all([
-    getSettings(),
-    getSkills(),
-    getExperiences(),
-    getProjects(),
-  ]);
+  const [settings, skills, experiences, projects, certifications] =
+    await Promise.all([
+      getSettings(),
+      getSkills(),
+      getExperiences(),
+      getProjects(),
+      getCertifications(),
+    ]);
 
   const heroProps = {
     heroTitle: settings.heroTitle,
@@ -181,6 +209,7 @@ export default async function Home() {
           profileImage="/eggisatria.png"
         />
         <Experience experiences={experiences} />
+        <Certifications certifications={certifications as any} />
         <Projects initialProjects={projects as any} />
         <Contact
         // email={settings.email}

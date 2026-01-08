@@ -22,6 +22,7 @@ export const BUCKETS = {
   PROJECTS: "projects",
   BLOG: "blog",
   AVATARS: "avatars",
+  CERTIFICATES: "certificates",
 } as const;
 
 // Helper function to get public URL for an image

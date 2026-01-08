@@ -227,6 +227,9 @@ model Skill {
   level    Int        @default(50) // 0-100 proficiency
   order    Int        @default(0)
   
+  // Relations
+  certifications CertificationSkill[]
+  
   createdAt DateTime @default(now())
 
   @@map("skills")
@@ -239,4 +242,53 @@ enum SkillCategory {
   DEVOPS
   TOOL
   OTHER
+}
+
+// ============================================
+// CERTIFICATIONS
+// ============================================
+
+model Certification {
+  id               String   @id @default(cuid())
+  name             String
+  organization     String
+  issueDate        DateTime
+  credentialId     String?
+  verificationUrl  String?
+  organizationLogo String?
+  certificateFile  String?  // PDF or image of the certificate
+  category         CertificationCategory @default(OTHER)
+  displayOrder     Int      @default(0)
+  
+  // Relations
+  skills           CertificationSkill[]
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("certifications")
+}
+
+enum CertificationCategory {
+  MACHINE_LEARNING
+  CLOUD_COMPUTING
+  DATA_ANALYTICS
+  WEB_DEVELOPMENT
+  MOBILE_DEVELOPMENT
+  DEVOPS
+  CYBERSECURITY
+  DATABASE
+  OTHER
+}
+
+model CertificationSkill {
+  id              String        @id @default(cuid())
+  certificationId String
+  skillId         String
+  
+  certification   Certification @relation(fields: [certificationId], references: [id], onDelete: Cascade)
+  skill           Skill         @relation(fields: [skillId], references: [id], onDelete: Cascade)
+
+  @@unique([certificationId, skillId])
+  @@map("certification_skills")
 }
