@@ -24,37 +24,8 @@ async function getSettings() {
       },
       {} as Record<string, any>,
     );
-  } catch (error: any) {
-    // Retry logic for P2024 (Connection pool timeout)
-    if (error?.code === "P2024") {
-      console.warn("P2024 error fetching settings, retrying...");
-      // Simple retry since we can't easily recurse with arguments in this structure without refactoring
-      // But for build stability, even a single immediate retry might help, or we can assume page revalidation will fix it.
-      // However, for build, we should try again.
-      try {
-        await new Promise((resolve) => setTimeout(resolve, 1000));
-        const configs = await prisma.siteConfig.findMany();
-        return configs.reduce(
-          (acc: Record<string, any>, config: any) => {
-            try {
-              acc[config.key] = JSON.parse(config.value);
-            } catch {
-              acc[config.key] = config.value;
-            }
-            return acc;
-          },
-          {} as Record<string, any>,
-        );
-      } catch (retryError) {
-        console.error(
-          "Failed to fetch settings in RootLayout after retry:",
-          retryError,
-        );
-        return {};
-      }
-    }
-
-    console.error("Failed to fetch settings in RootLayout:", error);
+  } catch (error) {
+    console.error("Failed to fetch settings:", error);
     return {};
   }
 }
@@ -62,29 +33,12 @@ async function getSettings() {
 export async function generateMetadata(): Promise<Metadata> {
   const settings = await getSettings();
 
-  // SEO Settings from DB with fallbacks
-  const siteTitle = settings.siteTitle || "Eggi Satria | Data Engineer";
-  const siteDescription =
-    settings.siteDescription ||
+  const siteName = settings.siteName || "Eggi Satria";
+  const jobTitle = settings.heroSubtitle || "Full Stack Developer";
+  const siteTitle = `${siteName} | ${jobTitle}`;
+  const description =
     settings.heroDescription ||
-    "Data Engineer passionate about building exceptional digital experiences.";
-  const siteKeywords = settings.siteKeywords
-    ? settings.siteKeywords.split(",").map((k: string) => k.trim())
-    : [
-        "Full Stack Developer",
-        "React",
-        "Next.js",
-        "TypeScript",
-        "Web Developer",
-        "Software Engineer",
-      ];
-  const siteName = settings.siteName || "Eggi Satria"; // For JSON-LD and OG site_name
-  const creatorTwitter = settings.twitter
-    ? `@${settings.twitter.replace(/^@/, "")}`
-    : "@egistr";
-
-  // Images
-  const ogImage = settings.ogImage || "/opengraph-image.png";
+    "Full Stack Developer passionate about building exceptional digital experiences. Specialized in React, Next.js, and modern web technologies.";
 
   return {
     metadataBase: new URL("https://eggisatria.dev"),
@@ -92,8 +46,15 @@ export async function generateMetadata(): Promise<Metadata> {
       default: siteTitle,
       template: `%s | ${siteName}`,
     },
-    description: siteDescription,
-    keywords: siteKeywords,
+    description,
+    keywords: [
+      jobTitle,
+      "React",
+      "Next.js",
+      "TypeScript",
+      "Web Developer",
+      "Software Engineer",
+    ],
     authors: [{ name: siteName, url: "https://eggisatria.dev" }],
     creator: siteName,
     publisher: siteName,
@@ -113,23 +74,25 @@ export async function generateMetadata(): Promise<Metadata> {
       locale: "en_US",
       url: "https://eggisatria.dev",
       title: siteTitle,
-      description: siteDescription,
-      siteName: siteName,
+      description,
+      siteName,
       images: [
         {
-          url: ogImage,
+          url: "/opengraph-image.png",
           width: 1200,
           height: 630,
-          alt: siteTitle,
+          alt: `${siteName} - ${jobTitle}`,
         },
       ],
     },
     twitter: {
       card: "summary_large_image",
       title: siteTitle,
-      description: siteDescription,
-      creator: creatorTwitter,
-      images: [ogImage],
+      description,
+      creator: settings.twitter
+        ? `@${settings.twitter.replace(/^@/, "")}`
+        : "@egistr",
+      images: ["/twitter-image.png"],
     },
     icons: {
       icon: "/icon.png",
@@ -137,7 +100,7 @@ export async function generateMetadata(): Promise<Metadata> {
       apple: "/apple-icon.png",
     },
     verification: {
-      google: "google-site-verification=YOUR_CODE_HERE", // Ideally this should also be a setting
+      google: "google-site-verification=YOUR_CODE_HERE",
     },
   };
 }

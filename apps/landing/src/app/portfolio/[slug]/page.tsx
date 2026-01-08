@@ -79,7 +79,7 @@ export async function generateMetadata({
   };
 }
 
-async function getProject(slug: string, retries = 3, delay = 1000) {
+async function getProject(slug: string) {
   try {
     const project = await prisma.project.findUnique({
       where: { slug, status: "PUBLISHED" },
@@ -91,14 +91,7 @@ async function getProject(slug: string, retries = 3, delay = 1000) {
       },
     });
     return project;
-  } catch (error: any) {
-    if (error?.code === "P2024" && retries > 0) {
-      console.warn(
-        `P2024 error fetching project ${slug}, retrying in ${delay}ms... (${retries} retries left)`,
-      );
-      await new Promise((resolve) => setTimeout(resolve, delay));
-      return getProject(slug, retries - 1, delay * 2);
-    }
+  } catch (error) {
     console.error(`Failed to fetch project for slug: ${slug}`, error);
     throw error;
   }
