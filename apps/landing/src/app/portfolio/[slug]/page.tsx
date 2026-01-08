@@ -28,15 +28,12 @@ export async function generateStaticParams() {
 }
 
 // Generate dynamic metadata for SEO
+
 export async function generateMetadata({
   params,
 }: PageProps): Promise<Metadata> {
   const { slug } = await params;
-
-  const project = await prisma.project.findUnique({
-    where: { slug },
-    include: { techStack: true, author: { select: { name: true } } },
-  });
+  const project = await getProject(slug);
 
   if (!project) {
     return {
@@ -54,7 +51,9 @@ export async function generateMetadata({
     title: project.title,
     description,
     keywords: keywords || undefined,
-    authors: project.author ? [{ name: project.author.name }] : undefined,
+    authors: project.author
+      ? [{ name: project.author.name || "Eggi Satria" }]
+      : undefined,
     alternates: {
       canonical: url,
     },
@@ -71,7 +70,9 @@ export async function generateMetadata({
           alt: project.title,
         },
       ],
-      authors: project.author ? [project.author.name] : undefined,
+      authors: project.author
+        ? [project.author.name || "Eggi Satria"]
+        : undefined,
       tags: project.techStack.map((t) => t.name),
     },
     twitter: {
@@ -96,8 +97,8 @@ async function getProject(slug: string) {
     });
     return project;
   } catch (error) {
-    console.error(`Failed to fetch project for slug: ${slug}`, error);
-    throw error;
+    console.error(`Error fetching project for slug: ${slug}`, error);
+    return null;
   }
 }
 
