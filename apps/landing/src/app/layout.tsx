@@ -24,7 +24,36 @@ async function getSettings() {
       },
       {} as Record<string, any>,
     );
-  } catch (error) {
+  } catch (error: any) {
+    // Retry logic for P2024 (Connection pool timeout)
+    if (error?.code === "P2024") {
+      console.warn("P2024 error fetching settings, retrying...");
+      // Simple retry since we can't easily recurse with arguments in this structure without refactoring
+      // But for build stability, even a single immediate retry might help, or we can assume page revalidation will fix it.
+      // However, for build, we should try again.
+      try {
+        await new Promise((resolve) => setTimeout(resolve, 1000));
+        const configs = await prisma.siteConfig.findMany();
+        return configs.reduce(
+          (acc: Record<string, any>, config: any) => {
+            try {
+              acc[config.key] = JSON.parse(config.value);
+            } catch {
+              acc[config.key] = config.value;
+            }
+            return acc;
+          },
+          {} as Record<string, any>,
+        );
+      } catch (retryError) {
+        console.error(
+          "Failed to fetch settings in RootLayout after retry:",
+          retryError,
+        );
+        return {};
+      }
+    }
+
     console.error("Failed to fetch settings in RootLayout:", error);
     return {};
   }
