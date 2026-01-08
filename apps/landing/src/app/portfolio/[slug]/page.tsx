@@ -97,23 +97,6 @@ async function getProject(slug: string) {
   }
 }
 
-async function getRelatedProjects(currentSlug: string, techNames: string[]) {
-  const projects = await prisma.project.findMany({
-    where: {
-      status: "PUBLISHED",
-      slug: { not: currentSlug },
-      techStack: {
-        some: {
-          name: { in: techNames },
-        },
-      },
-    },
-    include: { techStack: true },
-    take: 3,
-  });
-  return projects;
-}
-
 export const revalidate = 60;
 
 export default async function ProjectDetailPage({ params }: PageProps) {
@@ -123,9 +106,6 @@ export default async function ProjectDetailPage({ params }: PageProps) {
   if (!project) {
     notFound();
   }
-
-  const techNames = project.techStack.map((t) => t.name);
-  const relatedProjects = await getRelatedProjects(slug, techNames);
 
   // JSON-LD structured data for SEO
   const jsonLd = {
@@ -142,7 +122,7 @@ export default async function ProjectDetailPage({ params }: PageProps) {
       name: project.author?.name || "Eggi Satria",
       url: "https://eggisatria.dev",
     },
-    keywords: techNames.join(", "),
+    keywords: project.techStack.map((t) => t.name).join(", "),
     ...(project.githubUrl && { codeRepository: project.githubUrl }),
     ...(project.liveUrl && { mainEntityOfPage: project.liveUrl }),
   };
@@ -356,48 +336,6 @@ export default async function ProjectDetailPage({ params }: PageProps) {
               </div>
             </section>
           </article>
-
-          {/* Related Projects */}
-          {relatedProjects.length > 0 && (
-            <section className="border-t border-border pt-12">
-              <h2 className="text-2xl font-bold text-foreground mb-6">
-                Related Projects
-              </h2>
-              <div className="grid md:grid-cols-3 gap-6">
-                {relatedProjects.map((related) => (
-                  <Link
-                    key={related.id}
-                    href={`/portfolio/${related.slug}`}
-                    className="group bg-card border border-border rounded-xl overflow-hidden hover:border-primary transition-colors"
-                  >
-                    <div className="aspect-video bg-secondary/50 relative">
-                      {related.imageUrl ? (
-                        <Image
-                          src={related.imageUrl}
-                          alt={related.title}
-                          fill
-                          className="object-cover group-hover:scale-105 transition-transform duration-300"
-                          unoptimized
-                        />
-                      ) : (
-                        <div className="absolute inset-0 flex items-center justify-center">
-                          <Folder className="w-8 h-8 text-primary/40" />
-                        </div>
-                      )}
-                    </div>
-                    <div className="p-4">
-                      <h3 className="font-semibold text-foreground group-hover:text-primary transition-colors line-clamp-1">
-                        {related.title}
-                      </h3>
-                      <p className="text-sm text-muted-foreground line-clamp-2 mt-1">
-                        {related.description}
-                      </p>
-                    </div>
-                  </Link>
-                ))}
-              </div>
-            </section>
-          )}
 
           {/* CTA */}
           <section className="text-center mt-16 p-8 bg-card border border-border rounded-xl">
