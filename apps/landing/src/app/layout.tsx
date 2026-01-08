@@ -25,7 +25,7 @@ async function getSettings() {
       {} as Record<string, any>,
     );
   } catch (error) {
-    console.error("Failed to fetch settings:", error);
+    console.error("Failed to fetch settings in RootLayout:", error);
     return {};
   }
 }

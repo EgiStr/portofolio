@@ -80,16 +80,21 @@ export async function generateMetadata({
 }
 
 async function getProject(slug: string) {
-  const project = await prisma.project.findUnique({
-    where: { slug, status: "PUBLISHED" },
-    include: {
-      techStack: true,
-      author: {
-        select: { name: true, image: true },
+  try {
+    const project = await prisma.project.findUnique({
+      where: { slug, status: "PUBLISHED" },
+      include: {
+        techStack: true,
+        author: {
+          select: { name: true, image: true },
+        },
       },
-    },
-  });
-  return project;
+    });
+    return project;
+  } catch (error) {
+    console.error(`Failed to fetch project for slug: ${slug}`, error);
+    throw error;
+  }
 }
 
 async function getRelatedProjects(currentSlug: string, techNames: string[]) {
