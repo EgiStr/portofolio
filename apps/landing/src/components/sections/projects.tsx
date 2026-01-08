@@ -125,22 +125,24 @@ export function Projects({ initialProjects }: { initialProjects?: Project[] }) {
                   index % 2 === 0 ? "md:col-start-1" : "md:col-start-6"
                 }`}
               >
-                <div className="relative aspect-video rounded-lg overflow-hidden bg-secondary">
-                  <div className="absolute inset-0 bg-primary/20 group-hover:bg-transparent transition-colors duration-300 z-10" />
-                  {project.imageUrl ? (
-                    <Image
-                      src={project.imageUrl}
-                      alt={project.title}
-                      fill
-                      className="object-cover"
-                      unoptimized
-                    />
-                  ) : (
-                    <div className="w-full h-full flex items-center justify-center text-6xl">
-                      🚀
-                    </div>
-                  )}
-                </div>
+                <Link href={`/portfolio/${project.slug}`}>
+                  <div className="relative aspect-video rounded-lg overflow-hidden bg-secondary">
+                    <div className="absolute inset-0 bg-primary/20 group-hover:bg-transparent transition-colors duration-300 z-10" />
+                    {project.imageUrl ? (
+                      <Image
+                        src={project.imageUrl}
+                        alt={project.title}
+                        fill
+                        className="object-cover transition-transform duration-500 group-hover:scale-105"
+                        unoptimized
+                      />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center text-6xl">
+                        🚀
+                      </div>
+                    )}
+                  </div>
+                </Link>
               </div>
 
               {/* Project Info */}
@@ -155,15 +157,13 @@ export function Projects({ initialProjects }: { initialProjects?: Project[] }) {
                   Featured Project
                 </p>
                 <h3 className="text-2xl font-bold text-foreground mb-4">
-                  <a
-                    href={project.liveUrl || project.githubUrl || "#"}
-                    target="_blank"
-                    rel="noopener noreferrer"
+                  <Link
+                    href={`/portfolio/${project.slug}`}
                     className="hover:text-primary transition-colors"
                     onClick={() => handleProjectClick(project.id)}
                   >
                     {project.title}
-                  </a>
+                  </Link>
                 </h3>
                 <div className="bg-secondary/80 backdrop-blur-sm p-6 rounded-lg shadow-lg mb-4">
                   <p className="text-muted-foreground">{project.description}</p>
@@ -253,7 +253,9 @@ export function Projects({ initialProjects }: { initialProjects?: Project[] }) {
                   </div>
                 </div>
                 <h4 className="text-lg font-semibold text-foreground mb-2 group-hover:text-primary transition-colors">
-                  {project.title}
+                  <Link href={`/portfolio/${project.slug}`}>
+                    {project.title}
+                  </Link>
                 </h4>
                 <p className="text-muted-foreground text-sm flex-1 mb-4">
                   {project.description}

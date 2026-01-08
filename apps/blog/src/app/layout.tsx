@@ -40,6 +40,16 @@ export async function generateMetadata(): Promise<Metadata> {
   const description =
     settings.blogDescription ||
     "Thoughts on software development, design, and technology.";
+  const siteKeywords = settings.siteKeywords
+    ? settings.siteKeywords.split(",").map((k: string) => k.trim())
+    : [
+        "Blog",
+        "Software Development",
+        "Technology",
+        "Programming",
+        "Tutorials",
+      ];
+  const ogImage = settings.ogImage || "/opengraph-image.png";
 
   return {
     metadataBase: new URL("https://blog.eggisatria.dev"),
@@ -48,6 +58,7 @@ export async function generateMetadata(): Promise<Metadata> {
       template: `%s | ${title}`,
     },
     description,
+    keywords: siteKeywords,
     icons: {
       icon: "/icon.png",
       apple: "/apple-icon.png",
@@ -61,7 +72,7 @@ export async function generateMetadata(): Promise<Metadata> {
       siteName: title,
       images: [
         {
-          url: "/opengraph-image.png",
+          url: ogImage,
           width: 1200,
           height: 630,
           alt: title,
@@ -72,7 +83,7 @@ export async function generateMetadata(): Promise<Metadata> {
       card: "summary_large_image",
       title,
       description,
-      images: ["/twitter-image.png"],
+      images: [ogImage],
     },
   };
 }

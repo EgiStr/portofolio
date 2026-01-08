@@ -5,7 +5,6 @@ import { Hero } from "@/components/sections/hero";
 import { About } from "@/components/sections/about";
 import { Spotlight, GridBackground } from "@/components/ui/spotlight";
 import { prisma } from "@ecosystem/database";
-import type { Metadata } from "next";
 
 // Lazy load below-fold components to reduce initial bundle
 const Experience = dynamic(
@@ -30,36 +29,6 @@ const Contact = dynamic(
 );
 
 export const revalidate = 60; // Revalidate every 60 seconds
-
-export async function generateMetadata(): Promise<Metadata> {
-  try {
-    const configs = await prisma.siteConfig.findMany();
-    const settings = configs.reduce(
-      (acc: Record<string, any>, config: any) => {
-        try {
-          acc[config.key] = JSON.parse(config.value);
-        } catch {
-          acc[config.key] = config.value;
-        }
-        return acc;
-      },
-      {} as Record<string, any>,
-    );
-
-    return {
-      title: settings.siteName || "Eggi Satria | Full Stack Developer",
-      description:
-        settings.heroDescription ||
-        "Full Stack Developer passionate about building exceptional digital experiences.",
-    };
-  } catch (error) {
-    return {
-      title: "Eggi Satria | Full Stack Developer",
-      description:
-        "Full Stack Developer passionate about building exceptional digital experiences.",
-    };
-  }
-}
 
 async function getSettings() {
   try {
@@ -208,8 +177,8 @@ export default async function Home() {
           skills={skills}
           profileImage="/eggisatria.png"
         />
-        <Projects initialProjects={projects as any} />
         <Experience experiences={experiences} />
+        <Projects initialProjects={projects as any} />
         <Certifications certifications={certifications as any} />
         <Contact
         // email={settings.email}

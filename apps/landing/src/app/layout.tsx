@@ -33,12 +33,29 @@ async function getSettings() {
 export async function generateMetadata(): Promise<Metadata> {
   const settings = await getSettings();
 
-  const siteName = settings.siteName || "Eggi Satria";
-  const jobTitle = settings.heroSubtitle || "Full Stack Developer";
-  const siteTitle = `${siteName} | ${jobTitle}`;
-  const description =
+  // SEO Settings from DB with fallbacks
+  const siteTitle = settings.siteTitle || "Eggi Satria | Data Engineer";
+  const siteDescription =
+    settings.siteDescription ||
     settings.heroDescription ||
-    "Full Stack Developer passionate about building exceptional digital experiences. Specialized in React, Next.js, and modern web technologies.";
+    "Data Engineer passionate about building exceptional digital experiences.";
+  const siteKeywords = settings.siteKeywords
+    ? settings.siteKeywords.split(",").map((k: string) => k.trim())
+    : [
+        "Full Stack Developer",
+        "React",
+        "Next.js",
+        "TypeScript",
+        "Web Developer",
+        "Software Engineer",
+      ];
+  const siteName = settings.siteName || "Eggi Satria"; // For JSON-LD and OG site_name
+  const creatorTwitter = settings.twitter
+    ? `@${settings.twitter.replace(/^@/, "")}`
+    : "@egistr";
+
+  // Images
+  const ogImage = settings.ogImage || "/opengraph-image.png";
 
   return {
     metadataBase: new URL("https://eggisatria.dev"),
@@ -46,15 +63,8 @@ export async function generateMetadata(): Promise<Metadata> {
       default: siteTitle,
       template: `%s | ${siteName}`,
     },
-    description,
-    keywords: [
-      jobTitle,
-      "React",
-      "Next.js",
-      "TypeScript",
-      "Web Developer",
-      "Software Engineer",
-    ],
+    description: siteDescription,
+    keywords: siteKeywords,
     authors: [{ name: siteName, url: "https://eggisatria.dev" }],
     creator: siteName,
     publisher: siteName,
@@ -74,25 +84,23 @@ export async function generateMetadata(): Promise<Metadata> {
       locale: "en_US",
       url: "https://eggisatria.dev",
       title: siteTitle,
-      description,
-      siteName,
+      description: siteDescription,
+      siteName: siteName,
       images: [
         {
-          url: "/opengraph-image.png",
+          url: ogImage,
           width: 1200,
           height: 630,
-          alt: `${siteName} - ${jobTitle}`,
+          alt: siteTitle,
         },
       ],
     },
     twitter: {
       card: "summary_large_image",
       title: siteTitle,
-      description,
-      creator: settings.twitter
-        ? `@${settings.twitter.replace(/^@/, "")}`
-        : "@egistr",
-      images: ["/twitter-image.png"],
+      description: siteDescription,
+      creator: creatorTwitter,
+      images: [ogImage],
     },
     icons: {
       icon: "/icon.png",
@@ -100,7 +108,7 @@ export async function generateMetadata(): Promise<Metadata> {
       apple: "/apple-icon.png",
     },
     verification: {
-      google: "google-site-verification=YOUR_CODE_HERE",
+      google: "google-site-verification=YOUR_CODE_HERE", // Ideally this should also be a setting
     },
   };
 }
