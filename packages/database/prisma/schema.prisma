@@ -292,3 +292,104 @@ model CertificationSkill {
   @@unique([certificationId, skillId])
   @@map("certification_skills")
 }
+
+// ============================================
+// EDS - STORAGE NODES
+// ============================================
+
+model StorageNode {
+  id                    String    @id @default(cuid())
+  email                 String    @unique // Google account email
+  accessTokenEncrypted  String    @db.Text
+  refreshTokenEncrypted String    @db.Text
+  totalSpace            BigInt    @default(16106127360) // 15GB in bytes
+  usedSpace             BigInt    @default(0)
+  reservedSpace         BigInt    @default(0)
+  isActive              Boolean   @default(true)
+  tokenExpiresAt        DateTime?
+  lastSyncAt            DateTime?
+  
+  // Relations
+  files                 EDSFile[]
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("eds_storage_nodes")
+}
+
+// ============================================
+// EDS - VIRTUAL FOLDERS
+// ============================================
+
+model EDSFolder {
+  id        String      @id @default(cuid())
+  name      String
+  path      String      // Full path for quick lookup: /documents/work
+  parentId  String?
+  parent    EDSFolder?  @relation("FolderHierarchy", fields: [parentId], references: [id])
+  children  EDSFolder[] @relation("FolderHierarchy")
+  files     EDSFile[]
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([parentId, name])
+  @@map("eds_folders")
+}
+
+// ============================================
+// EDS - FILES
+// ============================================
+
+model EDSFile {
+  id           String       @id @default(cuid())
+  name         String
+  mimeType     String
+  size         BigInt
+  sha256Hash   String?
+  googleFileId String
+  
+  // Relations
+  nodeId       String
+  node         StorageNode  @relation(fields: [nodeId], references: [id])
+  folderId     String?
+  folder       EDSFolder?   @relation(fields: [folderId], references: [id])
+  
+  uploadedAt   DateTime     @default(now())
+  deletedAt    DateTime?    // Soft delete
+
+  @@map("eds_files")
+}
+
+// ============================================
+// EDS - UPLOAD RESERVATIONS
+// ============================================
+
+model EDSReservation {
+  id        String   @id @default(cuid())
+  nodeId    String
+  size      BigInt
+  expiresAt DateTime
+  
+  createdAt DateTime @default(now())
+
+  @@map("eds_reservations")
+}
+
+// ============================================
+// EDS - ACTIVITY LOG
+// ============================================
+
+model EDSActivityLog {
+  id         String   @id @default(cuid())
+  action     String   // UPLOAD, DOWNLOAD, DELETE, NODE_ADDED, etc
+  targetType String   // FILE, FOLDER, NODE
+  targetId   String?
+  metadata   Json?
+  
+  createdAt  DateTime @default(now())
+
+  @@map("eds_activity_logs")
+}
+
