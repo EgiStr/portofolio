@@ -56,3 +56,16 @@ export {
   SelectScrollDownButton,
 } from "./components/select";
 export { Checkbox } from "./components/checkbox";
+export {
+  Dialog,
+  DialogPortal,
+  DialogOverlay,
+  DialogClose,
+  DialogTrigger,
+  DialogContent,
+  DialogHeader,
+  DialogFooter,
+  DialogTitle,
+  DialogDescription,
+} from "./components/dialog";
+export { Alert, AlertTitle, AlertDescription } from "./components/alert";

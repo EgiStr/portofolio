@@ -70,7 +70,7 @@ export async function POST(request: NextRequest) {
             Authorization: `Bearer ${accessToken}`,
             "Content-Type": `multipart/related; boundary=foo_bar_baz`,
           },
-          body: createMultipartBody(fileName, mimeType, buffer),
+          body: createMultipartBody(fileName, mimeType, buffer) as any,
         },
       );
 
