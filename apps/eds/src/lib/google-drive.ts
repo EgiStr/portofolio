@@ -94,19 +94,27 @@ export async function getValidAccessToken(
 
   if (!node || !node.isActive) return null;
 
-  const accessToken = decryptToken(node.accessTokenEncrypted);
+  try {
+    const accessToken = decryptToken(node.accessTokenEncrypted);
 
-  // Check if token is expired or about to expire (5 min buffer)
-  const bufferMs = 5 * 60 * 1000;
-  const needsRefresh =
-    node.tokenExpiresAt &&
-    new Date(node.tokenExpiresAt.getTime() - bufferMs) <= new Date();
+    // Check if token is expired or about to expire (5 min buffer)
+    const bufferMs = 5 * 60 * 1000;
+    const needsRefresh =
+      node.tokenExpiresAt &&
+      new Date(node.tokenExpiresAt.getTime() - bufferMs) <= new Date();
 
-  if (needsRefresh) {
-    return await refreshNodeToken(nodeId);
+    if (needsRefresh) {
+      return await refreshNodeToken(nodeId);
+    }
+
+    return accessToken;
+  } catch (error) {
+    console.error(
+      `Failed to decrypt token for node ${nodeId}. Check ENCRYPTION_KEY match.`,
+      error,
+    );
+    return null;
   }
-
-  return accessToken;
 }
 
 // Get authenticated drive client for a specific node
