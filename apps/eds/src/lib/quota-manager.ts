@@ -44,6 +44,24 @@ export async function selectNodeForUpload(
   return eligibleNodes[0];
 }
 
+// Select node for upload with fallback support (excludes failed nodes)
+export async function selectNodeForUploadWithFallback(
+  fileSize: bigint,
+  excludeNodeIds: string[] = [],
+): Promise<NodeQuota | null> {
+  const nodes = await getActiveNodes();
+
+  // Filter nodes with enough space, exclude failed nodes, sort by available space
+  const eligibleNodes = nodes
+    .filter(
+      (node) =>
+        node.availableSpace >= fileSize && !excludeNodeIds.includes(node.id),
+    )
+    .sort((a, b) => Number(b.availableSpace - a.availableSpace));
+
+  return eligibleNodes[0] || null;
+}
+
 // Create a reservation for concurrent upload handling
 export async function createReservation(
   nodeId: string,

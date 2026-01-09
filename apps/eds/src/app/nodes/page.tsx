@@ -1,6 +1,6 @@
 import { prisma } from "@ecosystem/database";
 import { DriveLayout } from "@/components/drive/drive-layout";
-import { NodeCard } from "@/components/nodes/node-card";
+import { NodeGrid } from "@/components/nodes/node-grid";
 import { Plus, Server } from "lucide-react";
 import Link from "next/link";
 
@@ -13,10 +13,12 @@ async function getNodes() {
   });
 
   return nodes.map((node) => ({
-    ...node,
+    id: node.id,
+    email: node.email,
     totalSpace: node.totalSpace.toString(),
     usedSpace: node.usedSpace.toString(),
-    reservedSpace: node.reservedSpace.toString(),
+    isActive: node.isActive,
+    fileCount: node._count.files,
   }));
 }
 
@@ -45,19 +47,7 @@ export default async function NodesPage() {
 
         {/* Nodes Grid */}
         {nodes.length > 0 ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {nodes.map((node) => (
-              <NodeCard
-                key={node.id}
-                id={node.id}
-                email={node.email}
-                totalSpace={node.totalSpace}
-                usedSpace={node.usedSpace}
-                isActive={node.isActive}
-                fileCount={node._count.files}
-              />
-            ))}
-          </div>
+          <NodeGrid nodes={nodes} />
         ) : (
           <div className="flex flex-col items-center justify-center py-20 text-center glass rounded-2xl">
             <div className="h-16 w-16 rounded-2xl bg-secondary flex items-center justify-center mb-4">

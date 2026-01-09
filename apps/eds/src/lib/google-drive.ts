@@ -5,6 +5,17 @@ import { prisma } from "@ecosystem/database";
 export type DriveClient = ReturnType<typeof google.drive>;
 export type OAuth2Client = InstanceType<typeof Auth.OAuth2Client>;
 
+// Custom error for node token failures
+export class NodeTokenError extends Error {
+  constructor(
+    public nodeId: string,
+    public originalError: unknown,
+  ) {
+    super(`Token refresh failed for node ${nodeId}`);
+    this.name = "NodeTokenError";
+  }
+}
+
 // OAuth2 client configuration
 export function getOAuth2Client(): OAuth2Client {
   return new google.auth.OAuth2(
@@ -35,6 +46,69 @@ export async function exchangeCodeForTokens(code: string) {
   return tokens;
 }
 
+// Refresh token for a specific node (returns new access token or null on failure)
+export async function refreshNodeToken(nodeId: string): Promise<string | null> {
+  const node = await prisma.storageNode.findUnique({
+    where: { id: nodeId },
+  });
+
+  if (!node) return null;
+
+  const oauth2Client = getOAuth2Client();
+  const refreshToken = decryptToken(node.refreshTokenEncrypted);
+
+  oauth2Client.setCredentials({
+    refresh_token: refreshToken,
+  });
+
+  try {
+    const { credentials } = await oauth2Client.refreshAccessToken();
+
+    if (!credentials.access_token) return null;
+
+    // Update tokens in database
+    await prisma.storageNode.update({
+      where: { id: nodeId },
+      data: {
+        accessTokenEncrypted: encryptToken(credentials.access_token),
+        tokenExpiresAt: credentials.expiry_date
+          ? new Date(credentials.expiry_date)
+          : null,
+      },
+    });
+
+    return credentials.access_token;
+  } catch (error) {
+    console.error(`Token refresh failed for node ${nodeId}:`, error);
+    return null;
+  }
+}
+
+// Get valid access token for a node (refreshes if needed)
+export async function getValidAccessToken(
+  nodeId: string,
+): Promise<string | null> {
+  const node = await prisma.storageNode.findUnique({
+    where: { id: nodeId },
+  });
+
+  if (!node || !node.isActive) return null;
+
+  const accessToken = decryptToken(node.accessTokenEncrypted);
+
+  // Check if token is expired or about to expire (5 min buffer)
+  const bufferMs = 5 * 60 * 1000;
+  const needsRefresh =
+    node.tokenExpiresAt &&
+    new Date(node.tokenExpiresAt.getTime() - bufferMs) <= new Date();
+
+  if (needsRefresh) {
+    return await refreshNodeToken(nodeId);
+  }
+
+  return accessToken;
+}
+
 // Get authenticated drive client for a specific node
 export async function getDriveClient(nodeId: string): Promise<DriveClient> {
   const node = await prisma.storageNode.findUnique({
@@ -56,20 +130,24 @@ export async function getDriveClient(nodeId: string): Promise<DriveClient> {
     refresh_token: refreshToken,
   });
 
-  // Check if token needs refresh
+  // Check if token needs refresh (with error handling)
   if (node.tokenExpiresAt && new Date() >= node.tokenExpiresAt) {
-    const { credentials } = await oauth2Client.refreshAccessToken();
+    try {
+      const { credentials } = await oauth2Client.refreshAccessToken();
 
-    // Update tokens in database
-    await prisma.storageNode.update({
-      where: { id: nodeId },
-      data: {
-        accessTokenEncrypted: encryptToken(credentials.access_token || ""),
-        tokenExpiresAt: credentials.expiry_date
-          ? new Date(credentials.expiry_date)
-          : null,
-      },
-    });
+      // Update tokens in database
+      await prisma.storageNode.update({
+        where: { id: nodeId },
+        data: {
+          accessTokenEncrypted: encryptToken(credentials.access_token || ""),
+          tokenExpiresAt: credentials.expiry_date
+            ? new Date(credentials.expiry_date)
+            : null,
+        },
+      });
+    } catch (error) {
+      throw new NodeTokenError(nodeId, error);
+    }
   }
 
   return google.drive({ version: "v3", auth: oauth2Client });
