@@ -18,7 +18,7 @@ export default function DocsPage() {
         {/* Quick Links */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <Link
-            href="/docs/installation"
+            href="/installation"
             className="group flex items-start gap-4 p-4 rounded-xl border border-gray-200 dark:border-gray-800 hover:border-blue-500 dark:hover:border-blue-500 transition-colors"
           >
             <div className="p-2 rounded-lg bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400">
@@ -36,7 +36,7 @@ export default function DocsPage() {
           </Link>
 
           <Link
-            href="/docs/api/authentication"
+            href="/api/authentication"
             className="group flex items-start gap-4 p-4 rounded-xl border border-gray-200 dark:border-gray-800 hover:border-green-500 dark:hover:border-green-500 transition-colors"
           >
             <div className="p-2 rounded-lg bg-green-50 dark:bg-green-900/30 text-green-600 dark:text-green-400">
