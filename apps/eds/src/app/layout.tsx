@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import { Toaster } from "sonner";
+import { AuthProvider } from "@/components/auth/session-provider";
 import "./globals.css";
 
 const inter = Inter({ subsets: ["latin"] });
@@ -28,17 +29,19 @@ export default function RootLayout({
   return (
     <html lang="en" className="dark">
       <body className={inter.className}>
-        <main className="min-h-screen bg-background">{children}</main>
-        <Toaster
-          position="bottom-right"
-          toastOptions={{
-            style: {
-              background: "hsl(var(--card))",
-              color: "hsl(var(--foreground))",
-              border: "1px solid hsl(var(--border))",
-            },
-          }}
-        />
+        <AuthProvider>
+          <main className="min-h-screen bg-background">{children}</main>
+          <Toaster
+            position="bottom-right"
+            toastOptions={{
+              style: {
+                background: "hsl(var(--card))",
+                color: "hsl(var(--foreground))",
+                border: "1px solid hsl(var(--border))",
+              },
+            }}
+          />
+        </AuthProvider>
       </body>
     </html>
   );

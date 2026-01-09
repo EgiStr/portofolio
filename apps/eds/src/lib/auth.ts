@@ -46,8 +46,15 @@ export const authOptions: AuthOptions = {
     }),
   ],
   pages: {
-    signIn: "/login",
-    error: "/login",
+    // Redirect to manager for login in production
+    signIn:
+      process.env.NODE_ENV === "production"
+        ? "https://admin.eggisatria.dev/login"
+        : "/login",
+    error:
+      process.env.NODE_ENV === "production"
+        ? "https://admin.eggisatria.dev/login"
+        : "/login",
   },
   callbacks: {
     async jwt({ token, user }) {
