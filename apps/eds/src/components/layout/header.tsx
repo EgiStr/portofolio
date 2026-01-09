@@ -2,6 +2,7 @@
 
 import { Search, Bell, Upload, User } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { GlobalSearch } from "./global-search";
 
 interface HeaderProps {
   sidebarCollapsed?: boolean;
@@ -17,16 +18,7 @@ export function Header({ sidebarCollapsed }: HeaderProps) {
     >
       <div className="flex h-full items-center justify-between px-6">
         {/* Search */}
-        <div className="flex-1 max-w-xl">
-          <div className="relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-            <input
-              type="text"
-              placeholder="Search files and folders..."
-              className="w-full h-10 pl-10 pr-4 rounded-lg bg-secondary border border-border text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all"
-            />
-          </div>
-        </div>
+        <GlobalSearch />
 
         {/* Actions */}
         <div className="flex items-center gap-4 ml-6">
