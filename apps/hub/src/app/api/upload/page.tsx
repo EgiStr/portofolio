@@ -345,7 +345,7 @@ else:
       <h2>Next Steps</h2>
       <div className="not-prose flex gap-4 mt-6">
         <Link
-          href="/docs/api/responses"
+          href="/api/responses"
           className="flex-1 p-4 rounded-lg border border-gray-200 dark:border-gray-800 hover:border-blue-500 dark:hover:border-blue-500 transition-colors"
         >
           <span className="text-sm text-gray-500">Next</span>

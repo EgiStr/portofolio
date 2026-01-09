@@ -78,14 +78,14 @@ export default function UploadFlowPage() {
       <p>
         When using the External Developer API, the flow is identical. Your
         script or application acts as the client. See the{" "}
-        <Link href="/docs/api/upload">API Upload documentation</Link> for
+        <Link href="/api/upload">API Upload documentation</Link> for
         implementation details.
       </p>
 
       <h2>Next Steps</h2>
       <div className="not-prose flex gap-4 mt-6">
         <Link
-          href="/docs/api/authentication"
+          href="/api/authentication"
           className="flex-1 p-4 rounded-lg border border-gray-200 dark:border-gray-800 hover:border-blue-500 dark:hover:border-blue-500 transition-colors"
         >
           <span className="text-sm text-gray-500">Next</span>

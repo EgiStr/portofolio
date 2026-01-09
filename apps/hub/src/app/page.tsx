@@ -149,35 +149,26 @@ export default function DocsPage() {
 
       <ol>
         <li>
-          <Link
-            href="/docs/installation"
-            className="text-blue-600 hover:underline"
-          >
+          <Link href="/installation" className="text-blue-600 hover:underline">
             Installation
           </Link>{" "}
           - Set up your development environment
         </li>
         <li>
-          <Link
-            href="/docs/configuration"
-            className="text-blue-600 hover:underline"
-          >
+          <Link href="/configuration" className="text-blue-600 hover:underline">
             Configuration
           </Link>{" "}
           - Configure Google Cloud and environment variables
         </li>
         <li>
-          <Link
-            href="/docs/storage-nodes"
-            className="text-blue-600 hover:underline"
-          >
+          <Link href="/storage-nodes" className="text-blue-600 hover:underline">
             Storage Nodes
           </Link>{" "}
           - Add your first Google Drive storage node
         </li>
         <li>
           <Link
-            href="/docs/api/authentication"
+            href="/api/authentication"
             className="text-blue-600 hover:underline"
           >
             API Authentication

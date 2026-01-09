@@ -292,7 +292,7 @@ UPLOAD_URL=$(echo "$RESPONSE" | grep -o '"uploadUrl":"[^"]*"' | cut -d'"' -f4)`}
 
       <div className="not-prose flex gap-4 mt-8">
         <Link
-          href="/docs/security/api-keys"
+          href="/security/api-keys"
           className="flex-1 p-4 rounded-lg border border-gray-200 dark:border-gray-800 hover:border-blue-500 dark:hover:border-blue-500 transition-colors"
         >
           <span className="text-sm text-gray-500">Next</span>
