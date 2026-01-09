@@ -29,8 +29,22 @@ Saat user akan mengupload file, sistem menentukan node mana yang akan digunakan:
 2. **Strategy**: **Most Space Available First** (Prioritas node dengan ruang kosong terbesar).
 3. **Reservation**: Membuat record `EDSReservation` untuk "booking" ketersediaan space agar tidak terjadi race condition saat multiple upload berjalan.
 
-### 2.2 Alur Upload (Server Proxy)
-Upload dilakukan via server proxy untuk keamanan token dan menghindari masalah CORS:
+### 2.2 Alur Upload (Direct-to-Drive Resumable)
+Sistem upload telah diupgrade menggunakan protokol **Resumable Upload** Google Drive untuk mendukung file besar (>1GB) dan bypass limitasi serverless (Vercel Timeout/Body Size).
+
+#### Fitur Utama:
+- **Chunked Upload**: File dipecah menjadi bagian-bagian kecil (10MB) di sisi client.
+- **Direct Transfer**: Chunk dikirim langsung dari Browser ke Google Drive (`googleusercontent.com`), tidak membebani bandwidth server EDS.
+- **Auto-Retry**: Jika koneksi putus saat upload chunk, sistem otomatis melakukan retry tanpa mengulang dari awal.
+- **Support Besar**: Mendukung file hingga 5TB.
+
+#### Technical Note: CORS Bypass Strategy
+Browser secara default memblokir request PUT ke domain berbeda (`googleusercontent.com`) jika tidak ada header CORS yang sesuai. EDS mengatasi ini dengan metode **Origin Forwarding**:
+
+1. **Server-Side Init**: Saat client request `/api/drive/upload/init`, server Next.js menangkap header `Origin` dari browser (e.g., `http://localhost:3000`).
+2. **Forwarding**: Server meneruskan header `Origin` tersebut saat request Session ID ke Google Drive API.
+3. **Whitelisting**: Google merespons dengan URL session yang secara spesifik mengizinkan origin tersebut (Access-Control-Allow-Origin: http://localhost:3000).
+4. **Client-Side Header**: Client menggunakan `credentials: 'omit'` dan menghindari header terlarang (seperti `Content-Length` manual) untuk mencegah preflight failure.
 
 ```mermaid
 sequenceDiagram
@@ -39,15 +53,27 @@ sequenceDiagram
     participant Database
     participant Google_Drive
 
-    User->>EDS_API: POST /api/drive/upload (File + FolderId)
-    EDS_API->>EDS_API: 1. Select Best Node
-    EDS_API->>Database: 2. Create Reservation
-    EDS_API->>Database: 3. Get Node & Decrypt Token
-    EDS_API->>Google_Drive: 4. Upload Stream (Multipart)
-    Google_Drive-->>EDS_API: 5. Return GoogleFileId
-    EDS_API->>Database: 6. Create EDSFile Record
-    EDS_API->>Database: 7. Update Node Usage
-    EDS_API-->>User: 8. Success Response
+    Note over User, EDS_API: Phase 1: Initialization
+    User->>EDS_API: POST /api/drive/upload/init (Metadata)
+    EDS_API->>EDS_API: Select Best Node
+    EDS_API->>Database: Create Reservation
+    EDS_API->>Google_Drive: Init Resumable Session (Server-to-Server)
+    Google_Drive-->>EDS_API: Return Upload URL
+    EDS_API-->>User: Return Upload URL + NodeID
+
+    Note over User, Google_Drive: Phase 2: Direct Upload
+    loop Every 10MB Chunk
+        User->>Google_Drive: PUT Chunk (Direct)
+        Google_Drive-->>User: 308 Resume Incomplete
+    end
+    User->>Google_Drive: PUT Last Chunk
+    Google_Drive-->>User: 200 OK + File Metadata
+
+    Note over User, EDS_API: Phase 3: Finalization
+    User->>EDS_API: POST /api/drive/upload/finalize
+    EDS_API->>Database: Save EDSFile Record
+    EDS_API->>Database: Commit Reservation
+    EDS_API-->>User: Success
 ```
 
 ### 2.3 Recursive Folder Upload (Drag-and-Drop)

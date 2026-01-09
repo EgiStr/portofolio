@@ -62,6 +62,9 @@ export async function POST(request: NextRequest) {
               "Content-Type": "application/json",
               "X-Upload-Content-Type": mimeType,
               "X-Upload-Content-Length": size.toString(),
+              ...(request.headers.get("origin")
+                ? { Origin: request.headers.get("origin")! }
+                : {}),
             },
             body: JSON.stringify({
               name: name,

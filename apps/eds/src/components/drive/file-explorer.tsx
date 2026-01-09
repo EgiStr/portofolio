@@ -6,6 +6,7 @@ import { FolderRow } from "./folder-row";
 import { FolderOpen, Upload, Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
+import { useDriveUpload } from "@/hooks/use-drive-upload";
 
 interface FileData {
   id: string;
@@ -123,6 +124,7 @@ export function FileExplorer({
   draggedFileId,
   onUploadComplete,
 }: FileExplorerProps) {
+  const { uploadFile: uploadToDrive } = useDriveUpload();
   const [dropTargetId, setDropTargetId] = useState<string | null>(null);
   const [isUploading, setIsUploading] = useState(false);
   const [uploadProgress, setUploadProgress] = useState<UploadProgress | null>(
@@ -308,21 +310,23 @@ export function FileExplorer({
           }
 
           // Upload file
-          const formData = new FormData();
-          formData.append("file", file);
-          if (targetFolderId) {
-            formData.append("folderId", targetFolderId);
-          }
-
           try {
-            const response = await fetch("/api/drive/upload", {
-              method: "POST",
-              body: formData,
+            await uploadToDrive(file, targetFolderId || undefined, {
+              onError: (err) => {
+                console.error(`Failed to upload ${fileName}:`, err);
+                toast.error(`Failed to upload ${fileName}`);
+              },
             });
 
-            if (!response.ok) {
-              console.error(`Failed to upload ${fileName}`);
-            }
+            // Update progress (count based)
+            setUploadProgress((prev) =>
+              prev
+                ? {
+                    ...prev,
+                    completed: prev.completed + 1,
+                  }
+                : null,
+            );
           } catch (err) {
             console.error(`Upload error for ${fileName}:`, err);
           }

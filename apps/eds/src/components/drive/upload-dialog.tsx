@@ -12,6 +12,7 @@ import {
 } from "lucide-react";
 import { cn, formatBytes } from "@/lib/utils";
 import { toast } from "sonner";
+import { useDriveUpload } from "@/hooks/use-drive-upload";
 
 interface UploadDialogProps {
   isOpen: boolean;
@@ -101,6 +102,8 @@ export function UploadDialog({
     setFiles((prev) => prev.filter((_, i) => i !== index));
   };
 
+  const { uploadFile: uploadToDrive } = useDriveUpload();
+
   const uploadFile = async (uploadingFile: UploadingFile, index: number) => {
     const { file } = uploadingFile;
 
@@ -111,71 +114,38 @@ export function UploadDialog({
       ),
     );
 
-    try {
-      // Create FormData
-      const formData = new FormData();
-      formData.append("file", file);
-      if (selectedFolderId) {
-        formData.append("folderId", selectedFolderId);
-      }
-
-      // Upload via server proxy with XHR for progress
-      await new Promise<void>((resolve, reject) => {
-        const xhr = new XMLHttpRequest();
-
-        xhr.upload.addEventListener("progress", (e) => {
-          if (e.lengthComputable) {
-            const progress = Math.round((e.loaded / e.total) * 100);
-            setFiles((prev) =>
-              prev.map((f, i) => (i === index ? { ...f, progress } : f)),
-            );
-          }
-        });
-
-        xhr.addEventListener("load", () => {
-          if (xhr.status >= 200 && xhr.status < 300) {
-            resolve();
-          } else {
-            try {
-              const response = JSON.parse(xhr.responseText);
-              reject(new Error(response.error || "Upload failed"));
-            } catch {
-              reject(new Error(`Upload failed with status ${xhr.status}`));
-            }
-          }
-        });
-
-        xhr.addEventListener("error", () => {
-          reject(new Error("Upload failed - network error"));
-        });
-
-        xhr.open("POST", "/api/drive/upload");
-        xhr.send(formData);
-      });
-
-      // Update status to success
-      setFiles((prev) =>
-        prev.map((f, i) =>
-          i === index ? { ...f, status: "success" as const, progress: 100 } : f,
-        ),
-      );
-
-      toast.success(`${file.name} uploaded successfully`);
-    } catch (error) {
-      console.error("Upload error:", error);
-      setFiles((prev) =>
-        prev.map((f, i) =>
-          i === index
-            ? {
-                ...f,
-                status: "error" as const,
-                error: error instanceof Error ? error.message : "Upload failed",
-              }
-            : f,
-        ),
-      );
-      toast.error(`Failed to upload ${file.name}`);
-    }
+    await uploadToDrive(file, selectedFolderId, {
+      onProgress: (progress) => {
+        setFiles((prev) =>
+          prev.map((f, i) => (i === index ? { ...f, progress } : f)),
+        );
+      },
+      onComplete: () => {
+        setFiles((prev) =>
+          prev.map((f, i) =>
+            i === index
+              ? { ...f, status: "success" as const, progress: 100 }
+              : f,
+          ),
+        );
+        toast.success(`${file.name} uploaded successfully`);
+      },
+      onError: (error) => {
+        console.error("Upload error:", error);
+        setFiles((prev) =>
+          prev.map((f, i) =>
+            i === index
+              ? {
+                  ...f,
+                  status: "error" as const,
+                  error: error.message || "Upload failed",
+                }
+              : f,
+          ),
+        );
+        toast.error(`Failed to upload ${file.name}`);
+      },
+    });
   };
 
   const startUpload = async () => {

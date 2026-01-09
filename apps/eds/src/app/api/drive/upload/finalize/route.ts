@@ -23,7 +23,15 @@ export async function POST(request: NextRequest) {
       folderId: fileMeta.folderId,
     });
 
-    return NextResponse.json({ file }, { status: 201 });
+    return NextResponse.json(
+      {
+        file: {
+          ...file,
+          size: file.size.toString(),
+        },
+      },
+      { status: 201 },
+    );
   } catch (error) {
     console.error("Upload finalize error:", error);
     return NextResponse.json(
