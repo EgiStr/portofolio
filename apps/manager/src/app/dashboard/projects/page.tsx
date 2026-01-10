@@ -81,15 +81,17 @@ export default function ProjectsPage() {
 
   return (
     <div>
-      <div className="flex items-center justify-between mb-8">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6 sm:mb-8">
         <div>
-          <h1 className="text-3xl font-bold text-foreground">Projects</h1>
-          <p className="text-muted-foreground mt-1">
+          <h1 className="text-2xl sm:text-3xl font-bold text-foreground">
+            Projects
+          </h1>
+          <p className="text-muted-foreground mt-1 text-sm sm:text-base">
             Manage your portfolio projects
           </p>
         </div>
         <Link href="/dashboard/projects/new">
-          <Button>
+          <Button className="w-full sm:w-auto min-h-[44px]">
             <Plus className="w-4 h-4 mr-2" />
             New Project
           </Button>
@@ -112,11 +114,11 @@ export default function ProjectsPage() {
         <div className="space-y-4">
           {projects.map((project) => (
             <Card key={project.id}>
-              <CardContent className="p-6">
-                <div className="flex items-start justify-between">
+              <CardContent className="p-4 sm:p-6">
+                <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
                   <div className="flex-1">
-                    <div className="flex items-center gap-3 mb-2">
-                      <h3 className="text-lg font-semibold text-foreground">
+                    <div className="flex items-center gap-3 mb-2 flex-wrap">
+                      <h3 className="text-base sm:text-lg font-semibold text-foreground">
                         {project.title}
                       </h3>
                       <Badge
@@ -170,16 +172,23 @@ export default function ProjectsPage() {
                       )}
                     </div>
                   </div>
-                  <div className="flex items-center gap-2">
-                    <Link href={`/dashboard/projects/${project.id}/edit`}>
-                      <Button variant="ghost" size="icon">
+                  <div className="flex sm:flex-col gap-2">
+                    <Link
+                      href={`/dashboard/projects/${project.id}/edit`}
+                      className="flex-1 sm:flex-none"
+                    >
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="w-full sm:w-auto min-w-[44px] min-h-[44px]"
+                      >
                         <Edit className="w-4 h-4" />
                       </Button>
                     </Link>
                     <Button
                       variant="ghost"
                       size="icon"
-                      className="text-destructive hover:text-destructive"
+                      className="text-destructive hover:text-destructive flex-1 sm:flex-none min-w-[44px] min-h-[44px]"
                       onClick={() => handleDelete(project.id, project.title)}
                     >
                       <Trash2 className="w-4 h-4" />
