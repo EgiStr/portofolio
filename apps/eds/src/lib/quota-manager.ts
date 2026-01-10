@@ -121,6 +121,7 @@ export async function finalizeUpload(params: {
   reservationId: string;
   googleFileId: string;
   name: string;
+  slug: string;
   mimeType: string;
   size: bigint;
   folderId?: string;
@@ -130,6 +131,7 @@ export async function finalizeUpload(params: {
     reservationId,
     googleFileId,
     name,
+    slug,
     mimeType,
     size,
     folderId,
@@ -139,6 +141,7 @@ export async function finalizeUpload(params: {
   const file = await prisma.eDSFile.create({
     data: {
       name,
+      slug,
       mimeType,
       size,
       googleFileId,

@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@ecosystem/database";
+import { generateUniqueFolderSlug } from "@/lib/slug-utils";
 
 // GET: List folders (optionally filtered by parent)
 export async function GET(request: NextRequest) {
@@ -40,32 +41,30 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Build path
-    let path = `/${name}`;
+    // Get existing folders in the same parent to check for duplicates
+    const existingFolders = await prisma.eDSFolder.findMany({
+      where: { parentId: parentId || null },
+      select: { slug: true },
+    });
+
+    // Generate unique slug for the folder
+    const folderSlug = generateUniqueFolderSlug(name, existingFolders);
+
+    // Build path using slugs
+    let path = `/${folderSlug}`;
     if (parentId) {
       const parent = await prisma.eDSFolder.findUnique({
         where: { id: parentId },
       });
       if (parent) {
-        path = `${parent.path}/${name}`;
+        path = `${parent.path}/${folderSlug}`;
       }
-    }
-
-    // Check if folder with same name already exists in parent
-    const existing = await prisma.eDSFolder.findFirst({
-      where: { name, parentId: parentId || null },
-    });
-
-    if (existing) {
-      return NextResponse.json(
-        { error: "A folder with this name already exists" },
-        { status: 409 },
-      );
     }
 
     const folder = await prisma.eDSFolder.create({
       data: {
         name: name.trim(),
+        slug: folderSlug,
         path,
         parentId: parentId || null,
       },

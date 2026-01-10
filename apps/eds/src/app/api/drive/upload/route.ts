@@ -7,6 +7,7 @@ import {
 } from "@/lib/quota-manager";
 import { prisma } from "@ecosystem/database";
 import { decryptToken } from "@/lib/encryption";
+import { generateUniqueFileSlug } from "@/lib/slug-utils";
 
 export const config = {
   api: {
@@ -30,6 +31,18 @@ export async function POST(request: NextRequest) {
     const fileSize = BigInt(file.size);
     const fileName = file.name;
     const mimeType = file.type || "application/octet-stream";
+
+    // Get existing files in the folder to check for duplicates
+    const existingFiles = await prisma.eDSFile.findMany({
+      where: {
+        folderId: folderId || null,
+        deletedAt: null,
+      },
+      select: { slug: true },
+    });
+
+    // Generate unique slug for the file
+    const fileSlug = generateUniqueFileSlug(fileName, existingFiles);
 
     // Select best node for upload
     const node = await selectNodeForUpload(fileSize);
@@ -89,6 +102,7 @@ export async function POST(request: NextRequest) {
         reservationId,
         googleFileId,
         name: fileName,
+        slug: fileSlug,
         mimeType,
         size: fileSize,
         folderId: folderId || undefined,

@@ -54,6 +54,7 @@ async function ensureFolderPath(folderPath: string): Promise<string | null> {
       folder = await prisma.eDSFolder.create({
         data: {
           name: part,
+          slug: part.toLowerCase().replace(/[^a-z0-9]+/g, "-"),
           path: currentPath,
           parentId: parentId,
         },
