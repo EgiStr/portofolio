@@ -30,46 +30,13 @@ const Contact = dynamic(
 
 export const revalidate = 60; // Revalidate every 60 seconds
 
-async function getSettings() {
-  try {
-    const configs = await prisma.siteConfig.findMany();
-    return configs.reduce(
-      (acc: Record<string, any>, config: any) => {
-        try {
-          acc[config.key] = JSON.parse(config.value);
-        } catch {
-          acc[config.key] = config.value;
-        }
-        return acc;
-      },
-      {} as Record<string, any>,
-    );
-  } catch (error) {
-    console.error("Failed to fetch settings:", error);
-    return {};
-  }
-}
-
-async function getSkills() {
-  try {
-    const skills = await prisma.skill.findMany({
-      orderBy: { order: "asc" },
-      take: 8,
-    });
-    return skills.map((s: any) => s.name);
-  } catch (error) {
-    console.error("Failed to fetch skills:", error);
-    return [];
-  }
-}
-
 async function getExperiences() {
   try {
     const experiences = await prisma.experience.findMany({
       orderBy: { order: "asc" },
     });
 
-    return experiences.map((exp: any) => {
+    return experiences.map((exp) => {
       const startDate = new Date(exp.startDate).toLocaleDateString("en-US", {
         month: "short",
         year: "numeric",
@@ -84,9 +51,7 @@ async function getExperiences() {
           : "";
 
       const description = exp.description
-        ? exp.description
-            .split("\n")
-            .filter((line: any) => line.trim().length > 0)
+        ? exp.description.split("\n").filter((line) => line.trim().length > 0)
         : [];
 
       return {
@@ -141,29 +106,11 @@ async function getCertifications() {
 }
 
 export default async function Home() {
-  const [settings, skills, experiences, projects, certifications] =
-    await Promise.all([
-      getSettings(),
-      getSkills(),
-      getExperiences(),
-      getProjects(),
-      getCertifications(),
-    ]);
-
-  const heroProps = {
-    heroTitle: settings.heroTitle,
-    heroSubtitle: settings.heroSubtitle,
-    heroDescription: settings.heroDescription,
-    socialLinks: {
-      github: settings.github,
-      linkedin: settings.linkedin,
-      twitter: settings.twitter,
-      instagram: settings.instagram,
-      youtube: settings.youtube,
-      email: settings.email,
-    },
-    resumeUrl: settings.resumeUrl,
-  };
+  const [experiences, projects, certifications] = await Promise.all([
+    getExperiences(),
+    getProjects(),
+    getCertifications(),
+  ]);
 
   return (
     <>
@@ -171,19 +118,12 @@ export default async function Home() {
       <GridBackground />
       <Navbar />
       <main className="relative z-10">
-        <Hero {...heroProps} />
-        <About
-          description={settings.aboutDescription}
-          skills={skills}
-          profileImage="/eggisatria.png"
-        />
+        <Hero />
+        <About />
         <Experience experiences={experiences} />
         <Projects initialProjects={projects as any} />
         <Certifications certifications={certifications as any} />
-        <Contact
-        // email={settings.email}
-        // socialLinks={heroProps.socialLinks}
-        />
+        <Contact />
       </main>
       <Footer />
     </>

@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@ecosystem/config": "workspace:*",
     "@ecosystem/database": "workspace:*",
     "@ecosystem/ui": "workspace:*",
     "@mdx-js/loader": "^3.0.0",

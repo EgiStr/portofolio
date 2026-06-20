@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@ecosystem/database";
+import { defaultSettings } from "@ecosystem/config/defaults";
 
 // GET /api/admin/settings - Get all settings
 export async function GET(request: NextRequest) {
@@ -25,50 +26,8 @@ export async function GET(request: NextRequest) {
     );
 
     // Default configuration to combine with updates
-    const defaultConfig = {
-      // Profile
-      name: "Eggi Satria",
-      email: "eggisatria2310@gmail.com",
-      bio: "Full Stack Developer passionate about building exceptional digital experiences.",
-      avatar: "",
-      location: "Indonesia",
-      phone: "",
-
-      // Landing Page
-      heroTitle: "Hi, I'm Eggi",
-      heroSubtitle: "Full Stack Developer",
-      heroDescription:
-        "I build things for the web. Specializing in creating exceptional digital experiences.",
-      aboutTitle: "About Me",
-      aboutDescription:
-        "A passionate developer with experience in building modern web applications.",
-      resumeUrl: "",
-
-      // Blog
-      blogTitle: "Blog",
-      blogDescription:
-        "Thoughts on software development, design, and technology.",
-      postsPerPage: 10,
-      showReadingTime: true,
-      showViewCount: true,
-
-      // Social Links
-      twitter: "@eggisatria",
-      github: "eggisatria",
-      linkedin: "eggisatria",
-      instagram: "@_egistr",
-      youtube: "eggisatria",
-
-      // SEO
-      siteTitle: "Eggi Satria | Full Stack Developer",
-      siteDescription:
-        "Full Stack Developer specializing in building exceptional digital experiences.",
-      siteKeywords: "developer, full stack, react, nextjs, typescript",
-      ogImage: "",
-      googleAnalyticsId: "",
-    };
-
-    return NextResponse.json({ ...defaultConfig, ...settingsMap });
+    // (sourced from `@ecosystem/config` so all apps stay in sync — bd-08)
+    return NextResponse.json({ ...defaultSettings, ...settingsMap });
   } catch (error) {
     console.error("Failed to fetch settings:", error);
     return NextResponse.json(
@@ -101,6 +60,16 @@ export async function PUT(request: NextRequest) {
     });
 
     await Promise.all(updatePromises);
+
+    // Fan out revalidation to consumer apps (landing, blog, eds, hub).
+    // Dynamic-imported + wrapped in try/catch so a missing helper from
+    // Builder A doesn't break the save flow — see bd-08 / bd-02.
+    try {
+      const { fanoutRevalidate } = await import("@/lib/revalidate-fanout");
+      await fanoutRevalidate(["site-settings"]);
+    } catch (err) {
+      console.warn("[settings] fanout revalidation skipped:", err);
+    }
 
     return NextResponse.json({ success: true, message: "Settings updated" });
   } catch (error) {

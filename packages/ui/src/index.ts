@@ -69,3 +69,4 @@ export {
   DialogDescription,
 } from "./components/dialog";
 export { Alert, AlertTitle, AlertDescription } from "./components/alert";
+export { ResumeUpload } from "./components/resume-upload";

@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@ecosystem/config": "workspace:*",
     "@ecosystem/database": "workspace:*",
     "@ecosystem/ui": "workspace:*",
     "@google/generative-ai": "^0.24.1",

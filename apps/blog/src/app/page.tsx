@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { prisma } from "@ecosystem/database";
+import { getSettings } from "@ecosystem/config";
 
 interface Post {
   slug: string;
@@ -46,19 +47,21 @@ function formatDate(dateString: string) {
 }
 
 export default async function HomePage() {
-  const recentPosts = await getRecentPosts();
+  const [settings, recentPosts] = await Promise.all([
+    getSettings(),
+    getRecentPosts(),
+  ]);
 
   return (
     <div>
       {/* Hero Section */}
       <section className="mb-16">
         <h1 className="text-4xl font-bold text-foreground mb-4">
-          hey, I&apos;m Eggi 👋
+          {settings.heroTitle} 👋
         </h1>
         <p className="text-muted-foreground text-lg leading-relaxed">
-          I&apos;m a Data Engineer who loves building software. I write about
-          engineering data pipelines, automating workflows, and the tech stack I
-          use to build intelligent systems.
+          {settings.bio} I write about engineering data pipelines, automating
+          workflows, and the tech stack I use to build intelligent systems.
         </p>
       </section>
 

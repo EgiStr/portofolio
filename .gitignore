@@ -42,3 +42,11 @@ packages/database/src/generated/
 # Testing
 coverage/
 .nyc_output/
+.vercel
+.env*
+
+# SDLC workspace (ephemeral build artifacts)
+.sdlc/
+
+# Playwright MCP cache
+.playwright-mcp/

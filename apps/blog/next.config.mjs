@@ -6,7 +6,11 @@ import remarkGfm from "remark-gfm";
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  transpilePackages: ["@ecosystem/ui", "@ecosystem/database"],
+  transpilePackages: [
+    "@ecosystem/ui",
+    "@ecosystem/database",
+    "@ecosystem/config",
+  ],
   pageExtensions: ["js", "jsx", "mdx", "ts", "tsx"],
   images: {
     formats: ["image/avif", "image/webp"],

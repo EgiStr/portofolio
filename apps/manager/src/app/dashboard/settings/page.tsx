@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { Card, CardHeader, CardTitle, CardContent } from "@ecosystem/ui";
-import { Button, Input, Label, Textarea } from "@ecosystem/ui";
+import { Button, Input, Label, Textarea, ResumeUpload } from "@ecosystem/ui";
 import {
   Save,
   User,
@@ -20,6 +20,7 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 import { ImageUpload } from "@/components/upload/image-upload";
+import { defaultSettings } from "@ecosystem/config/defaults";
 
 type Tab = "profile" | "landing" | "blog" | "social" | "seo";
 
@@ -62,43 +63,6 @@ interface Settings {
   googleAnalyticsId: string;
 }
 
-const defaultSettings: Settings = {
-  name: "Eggi Satria",
-  email: "eggisatria2310@gmail.com",
-  bio: "Full Stack Developer passionate about building exceptional digital experiences.",
-  avatar: "",
-  location: "Indonesia",
-  phone: "081302691577",
-
-  heroTitle: "Hi, I'm Eggi",
-  heroSubtitle: "Full Stack Developer",
-  heroDescription:
-    "I build things for the web. Specializing in creating exceptional digital experiences that are fast, accessible, and beautiful.",
-  aboutTitle: "About Me",
-  aboutDescription:
-    "A passionate developer with experience in building modern web applications.",
-  resumeUrl: "",
-
-  blogTitle: "Blog",
-  blogDescription: "Thoughts on software development, design, and technology.",
-  postsPerPage: 10,
-  showReadingTime: true,
-  showViewCount: true,
-
-  twitter: "@egistr",
-  github: "EgiStr",
-  linkedin: "eggisatria",
-  instagram: "@_egistr",
-  youtube: "eggisatria",
-
-  siteTitle: "Eggi Satria | Full Stack Developer",
-  siteDescription:
-    "Full Stack Developer specializing in building exceptional digital experiences.",
-  siteKeywords: "developer, full stack, react, nextjs, typescript",
-  ogImage: "",
-  googleAnalyticsId: "",
-};
-
 const tabs: { id: Tab; label: string; icon: React.ReactNode }[] = [
   { id: "profile", label: "Profile", icon: <User className="w-4 h-4" /> },
   {
@@ -113,7 +77,12 @@ const tabs: { id: Tab; label: string; icon: React.ReactNode }[] = [
 
 export default function SettingsPage() {
   const [activeTab, setActiveTab] = useState<Tab>("profile");
-  const [settings, setSettings] = useState<Settings>(defaultSettings);
+  // `defaultSettings` comes from `@ecosystem/config` (single source of truth).
+  // It includes `jobTitle` + `resumeFileName` which the local form doesn't
+  // surface yet, so cast to the UI-shaped `Settings`.
+  const [settings, setSettings] = useState<Settings>(
+    defaultSettings as unknown as Settings,
+  );
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
 
@@ -126,7 +95,7 @@ export default function SettingsPage() {
       const response = await fetch("/api/admin/settings");
       if (response.ok) {
         const data = await response.json();
-        setSettings({ ...defaultSettings, ...data });
+        setSettings({ ...defaultSettings, ...data } as Settings);
       }
     } catch (error) {
       console.error("Failed to fetch settings:", error);
@@ -362,14 +331,17 @@ export default function SettingsPage() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="resumeUrl">Resume/CV URL</Label>
-                <Input
-                  id="resumeUrl"
-                  type="url"
+                <ResumeUpload
                   value={settings.resumeUrl}
-                  onChange={(e) => handleChange("resumeUrl", e.target.value)}
-                  placeholder="https://example.com/resume.pdf"
+                  onChange={(url) => handleChange("resumeUrl", url)}
+                  bucket="eggisatria.dev"
+                  folder="resumes"
+                  label="Resume / CV"
                 />
+                <p className="text-xs text-muted-foreground">
+                  PDF only, max 10 MB. Uploaded here becomes the &ldquo;Download
+                  CV&rdquo; link on the landing page.
+                </p>
               </div>
             </CardContent>
           </Card>

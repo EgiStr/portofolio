@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import Script from "next/script";
+import { getSettings } from "@ecosystem/config";
 import "./globals.css";
-import { prisma } from "@ecosystem/database";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -10,54 +10,37 @@ const inter = Inter({
   variable: "--font-geist-sans",
 });
 
-async function getSettings() {
-  try {
-    const configs = await prisma.siteConfig.findMany();
-    return configs.reduce(
-      (acc: Record<string, any>, config: any) => {
-        try {
-          acc[config.key] = JSON.parse(config.value);
-        } catch {
-          acc[config.key] = config.value;
-        }
-        return acc;
-      },
-      {} as Record<string, any>,
-    );
-  } catch (error) {
-    console.error("Failed to fetch settings:", error);
-    return {};
-  }
-}
-
 export async function generateMetadata(): Promise<Metadata> {
   const settings = await getSettings();
 
-  const siteName = settings.siteName || "Eggi Satria";
-  const jobTitle = settings.heroSubtitle || "Full Stack Developer";
-  const siteTitle = `${siteName} | ${jobTitle}`;
+  const siteTitle =
+    settings.siteTitle || `${settings.name} | ${settings.jobTitle}`;
   const description =
+    settings.siteDescription ||
     settings.heroDescription ||
-    "Full Stack Developer passionate about building exceptional digital experiences. Specialized in React, Next.js, and modern web technologies.";
+    "Full Stack Developer passionate about building exceptional digital experiences.";
+  const keywords = settings.siteKeywords
+    ? settings.siteKeywords.split(",").map((k) => k.trim())
+    : [
+        settings.jobTitle,
+        "React",
+        "Next.js",
+        "TypeScript",
+        "Web Developer",
+        "Software Engineer",
+      ];
 
   return {
     metadataBase: new URL("https://eggisatria.dev"),
     title: {
       default: siteTitle,
-      template: `%s | ${siteName}`,
+      template: `%s | ${settings.name}`,
     },
     description,
-    keywords: [
-      jobTitle,
-      "React",
-      "Next.js",
-      "TypeScript",
-      "Web Developer",
-      "Software Engineer",
-    ],
-    authors: [{ name: siteName, url: "https://eggisatria.dev" }],
-    creator: siteName,
-    publisher: siteName,
+    keywords,
+    authors: [{ name: settings.name, url: "https://eggisatria.dev" }],
+    creator: settings.name,
+    publisher: settings.name,
     robots: {
       index: true,
       follow: true,
@@ -75,13 +58,13 @@ export async function generateMetadata(): Promise<Metadata> {
       url: "https://eggisatria.dev",
       title: siteTitle,
       description,
-      siteName,
+      siteName: settings.name,
       images: [
         {
           url: "/opengraph-image.png",
           width: 1200,
           height: 630,
-          alt: `${siteName} - ${jobTitle}`,
+          alt: `${settings.name} - ${settings.jobTitle}`,
         },
       ],
     },
@@ -112,30 +95,34 @@ export default async function RootLayout({
 }>) {
   const settings = await getSettings();
 
-  const siteName = settings.siteName || "Eggi Satria";
-  const jobTitle = settings.heroSubtitle || "Full Stack Developer";
   const description =
+    settings.siteDescription ||
     settings.heroDescription ||
     "Full Stack Developer passionate about building exceptional digital experiences.";
   const gaId = settings.googleAnalyticsId || "";
 
+  const sameAs = [
+    settings.github
+      ? `https://github.com/${settings.github.replace(/^@/, "")}`
+      : null,
+    settings.linkedin
+      ? `https://linkedin.com/in/${settings.linkedin.replace(/^@/, "")}`
+      : null,
+    settings.twitter
+      ? `https://twitter.com/${settings.twitter.replace(/^@/, "")}`
+      : null,
+    settings.instagram
+      ? `https://instagram.com/${settings.instagram.replace(/^@/, "")}`
+      : null,
+  ].filter(Boolean) as string[];
+
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "Person",
-    name: siteName,
+    name: settings.name,
     url: "https://eggisatria.dev",
-    sameAs: [
-      settings.github
-        ? `https://github.com/${settings.github.replace(/^@/, "")}`
-        : "https://github.com/EgiStr",
-      settings.linkedin
-        ? `https://linkedin.com/in/${settings.linkedin.replace(/^@/, "")}`
-        : "https://linkedin.com/in/eggisatria",
-      settings.twitter
-        ? `https://twitter.com/${settings.twitter.replace(/^@/, "")}`
-        : "https://twitter.com/_egistr",
-    ].filter(Boolean),
-    jobTitle,
+    sameAs,
+    jobTitle: settings.jobTitle,
     worksFor: {
       "@type": "Organization",
       name: "Freelance",

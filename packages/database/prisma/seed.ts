@@ -1,9 +1,10 @@
 import { PrismaClient, UserRole } from "@prisma/client";
+import { defaultSettings } from "@ecosystem/config";
 
 const prisma = new PrismaClient();
 
 async function main() {
-  console.log("🌱 Starting database seed...");
+  console.log("YO Starting database seed...");
 
   // 1. Clean existing data (optional, be careful in prod)
   // await prisma.projectTech.deleteMany();
@@ -29,43 +30,28 @@ async function main() {
         image: "/eggisatria.png",
       },
     });
-    console.log("👤 Created admin user:", user.email);
+    console.log("Y Created admin user:", user.email);
   } else {
     user = existingUser;
-    console.log("👤 Admin user already exists:", user.email);
+    console.log("Y Admin user already exists:", user.email);
   }
 
   // 3. Site Configuration
-  const siteConfigs = [
-    { key: "heroTitle", value: "Data Engineer" },
-    { key: "heroSubtitle", value: "Engineering Data & Building Software" },
-    {
-      key: "heroDescription",
-      value:
-        "I'm a Data Engineer who loves building software. I write about engineering data pipelines, automating workflows, and building intelligent systems.",
-    },
-    {
-      key: "aboutDescription",
-      value:
-        "<p>Hi, I'm Eggi Satria — a Data Engineer based in Indonesia who loves building software. I enjoy engineering robust data systems and developing the applications that make that data useful.</p>",
-    },
-    { key: "email", value: "eggisatria2310@gmail.com" },
-    { key: "github", value: "https://github.com/EgiStr" },
-    { key: "linkedin", value: "https://linkedin.com/in/eggisatria" },
-    { key: "twitter", value: "https://twitter.com/egistr" },
-    { key: "instagram", value: "https://instagram.com/_egistr" },
-    { key: "resumeUrl", value: "/resume.pdf" },
-    { key: "profileImage", value: "/eggisatria.png" },
-  ];
+  //    Seed every key defined in `@ecosystem/config/defaults` so first-time
+  //    deploys render non-empty values across all consumer apps. Idempotent:
+  //    wipe existing rows first, then re-insert from defaults.
+  const siteConfigEntries = Object.entries(defaultSettings).map(
+    ([key, value]) => ({
+      key,
+      value: typeof value === "string" ? value : JSON.stringify(value),
+    }),
+  );
 
-  for (const config of siteConfigs) {
-    await prisma.siteConfig.upsert({
-      where: { key: config.key },
-      update: { value: config.value },
-      create: { key: config.key, value: config.value },
-    });
-  }
-  console.log("⚙️  Seeded site configuration");
+  await prisma.siteConfig.deleteMany();
+  await prisma.siteConfig.createMany({ data: siteConfigEntries });
+  console.log(
+    `ST Seeded ${siteConfigEntries.length} site configuration keys from @ecosystem/config defaults`,
+  );
 
   // 4. Skills
   const skills = [
@@ -88,7 +74,7 @@ async function main() {
       },
     });
   }
-  console.log("🛠️  Seeded skills");
+  console.log("Y> Seeded skills");
 
   // 5. Experiences
   const experiences = [
@@ -118,7 +104,7 @@ async function main() {
       data: exp,
     });
   }
-  console.log("💼 Seeded experiences");
+  console.log("Y Seeded experiences");
 
   // 6. Projects
   const projects = [
@@ -171,14 +157,14 @@ async function main() {
       },
     });
   }
-  console.log("🚀 Seeded projects");
+  console.log("Y Seeded projects");
 
-  console.log("✅ Seeding completed successfully.");
+  console.log("o. Seeding completed successfully.");
 }
 
 main()
   .catch((e) => {
-    console.error("❌ Seeding failed:", e);
+    console.error("?O Seeding failed:", e);
     process.exit(1);
   })
   .finally(async () => {

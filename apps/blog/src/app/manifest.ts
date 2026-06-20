@@ -1,10 +1,12 @@
 import { MetadataRoute } from "next";
+import { getSettings } from "@ecosystem/config";
 
-export default function manifest(): MetadataRoute.Manifest {
+export default async function manifest(): Promise<MetadataRoute.Manifest> {
+  const settings = await getSettings();
   return {
-    name: "Eggi Satria blog",
-    short_name: "ES Blog",
-    description: "Thoughts on software development, design, and technology.",
+    name: `${settings.name} blog`,
+    short_name: `${settings.name} blog`,
+    description: settings.blogDescription,
     start_url: "/",
     display: "standalone",
     background_color: "#ffffff",

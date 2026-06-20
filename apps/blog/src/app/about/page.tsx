@@ -1,33 +1,42 @@
 import type { Metadata } from "next";
+import { getSettings } from "@ecosystem/config";
 
-export const metadata: Metadata = {
-  title: "About",
-  description: "Learn more about Eggi Satria - Data Engineer.",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const settings = await getSettings();
+  return {
+    title: `About — ${settings.name}`,
+    description: settings.siteDescription,
+  };
+}
 
-export default function AboutPage() {
+export default async function AboutPage() {
+  const settings = await getSettings();
+  const githubUrl = settings.github
+    ? `https://github.com/${settings.github}`
+    : "#";
+  const linkedinUrl = settings.linkedin
+    ? `https://linkedin.com/in/${settings.linkedin}`
+    : "#";
+
   return (
     <div className="prose prose-invert max-w-none">
-      <h1>About Me</h1>
+      <h1>{settings.aboutTitle}</h1>
 
       <p>
-        Hi, I&apos;m <strong>Eggi Satria</strong> — a Data Engineer based in
-        Indonesia who loves building software. I enjoy engineering robust data
-        systems and developing the applications that make that data useful.
+        Hi, I&apos;m <strong>{settings.name}</strong> — a {settings.jobTitle}{" "}
+        based in {settings.location} who loves building software. I enjoy
+        engineering robust data systems and developing the applications that
+        make that data useful.
       </p>
 
       <h2>What I Do</h2>
-      <p>
-        While my main focus is Data Engineering, I don&apos;t just stop at
-        pipelines and databases. I am passionate about building full-stack
-        software that brings data to life.
-      </p>
+      <p>{settings.bio}</p>
 
       <p>
         I specialize in creating end-to-end solutions—combining efficient data
-        architectures with modern web technologies. Whether it&apos;s
-        automating a workflow or building a dashboard from scratch, I love the
-        process of turning raw ideas into working software.
+        architectures with modern web technologies. Whether it&apos;s automating
+        a workflow or building a dashboard from scratch, I love the process of
+        turning raw ideas into working software.
       </p>
 
       <h2>My Stack</h2>
@@ -36,7 +45,8 @@ export default function AboutPage() {
           <strong>Data & AI:</strong> Python, SQL, YOLOv8, Pandas
         </li>
         <li>
-          <strong>Software Development:</strong> Next.js, TypeScript, Tailwind CSS
+          <strong>Software Development:</strong> Next.js, TypeScript, Tailwind
+          CSS
         </li>
         <li>
           <strong>Infrastructure:</strong> Docker, PostgreSQL, Linux (VPS)
@@ -67,13 +77,13 @@ export default function AboutPage() {
       </p>
       <ul>
         <li>
-          Email: <a href="mailto:eggisatria2310@gmail.com">eggisatria2310@gmail.com</a>
+          Email: <a href={`mailto:${settings.email}`}>{settings.email}</a>
         </li>
         <li>
-          GitHub: <a href="https://github.com/EgiStr">@EgiStr</a>
+          GitHub: <a href={githubUrl}>@{settings.github}</a>
         </li>
         <li>
-          LinkedIn: <a href="https://linkedin.com/in/eggisatria">@eggisatria</a>
+          LinkedIn: <a href={linkedinUrl}>@{settings.linkedin}</a>
         </li>
       </ul>
     </div>

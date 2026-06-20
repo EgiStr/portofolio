@@ -4,7 +4,7 @@ import Link from "next/link";
 import NextImage from "next/image";
 import Script from "next/script";
 import "./globals.css";
-import { prisma } from "@ecosystem/database";
+import { getSettings } from "@ecosystem/config";
 import { Toaster } from "sonner";
 
 const inter = Inter({
@@ -13,33 +13,11 @@ const inter = Inter({
   variable: "--font-sans",
 });
 
-// Fetch settings helper
-async function getSettings() {
-  try {
-    const configs = await prisma.siteConfig.findMany();
-    return configs.reduce(
-      (acc: Record<string, any>, config: any) => {
-        try {
-          acc[config.key] = JSON.parse(config.value);
-        } catch {
-          acc[config.key] = config.value;
-        }
-        return acc;
-      },
-      {} as Record<string, any>,
-    );
-  } catch (error) {
-    console.error("Failed to fetch settings:", error);
-    return {};
-  }
-}
-
 export async function generateMetadata(): Promise<Metadata> {
   const settings = await getSettings();
-  const title = settings.blogTitle || "Blog | Eggi Satria";
-  const description =
-    settings.blogDescription ||
-    "Thoughts on software development, design, and technology.";
+  const title = settings.siteTitle;
+  const description = settings.siteDescription;
+  const ogImage = settings.ogImage || "/opengraph-image.png";
 
   return {
     metadataBase: new URL("https://blog.eggisatria.dev"),
@@ -48,6 +26,9 @@ export async function generateMetadata(): Promise<Metadata> {
       template: `%s | ${title}`,
     },
     description,
+    keywords: settings.siteKeywords
+      ? settings.siteKeywords.split(",").map((k) => k.trim())
+      : undefined,
     icons: {
       icon: "/icon.png",
       apple: "/apple-icon.png",
@@ -61,7 +42,7 @@ export async function generateMetadata(): Promise<Metadata> {
       siteName: title,
       images: [
         {
-          url: "/opengraph-image.png",
+          url: ogImage,
           width: 1200,
           height: 630,
           alt: title,
@@ -72,7 +53,7 @@ export async function generateMetadata(): Promise<Metadata> {
       card: "summary_large_image",
       title,
       description,
-      images: ["/twitter-image.png"],
+      images: [ogImage],
     },
   };
 }
@@ -89,9 +70,11 @@ export default async function RootLayout({
   children: React.ReactNode;
 }>) {
   const settings = await getSettings();
-  const name = settings.name || "Eggi Satria";
-  const websiteUrl = settings.websiteUrl || "https://eggisatria.dev";
-  const gaId = settings.googleAnalyticsId || "";
+  const name = settings.name;
+  // websiteUrl is not in the centralized Settings schema; keep as a hardcoded
+  // fallback so the layout still renders if the SiteConfig is empty.
+  const websiteUrl = "https://eggisatria.dev";
+  const gaId = settings.googleAnalyticsId;
 
   return (
     <html lang="en" className="dark">

@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@ecosystem/config": "workspace:*",
     "@ecosystem/database": "workspace:*",
     "@ecosystem/ui": "workspace:*",
     "@prisma/nextjs-monorepo-workaround-plugin": "^7.2.0",
