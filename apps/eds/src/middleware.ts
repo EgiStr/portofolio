@@ -23,8 +23,9 @@ export const config = {
     // Protect all routes except:
     // - /api/auth (NextAuth routes)
     // - /api/drive (public API with API key auth)
+    // - /api/revalidate (cross-app cache invalidation, uses REVALIDATE_SECRET)
     // - /_next (Next.js internals)
     // - /favicon.ico, /robots.txt, etc.
-    "/((?!api/auth|api/drive|_next|favicon.ico|robots.txt).*)",
+    "/((?!api/auth|api/drive|api/revalidate|_next|favicon.ico|robots.txt).*)",
   ],
 };
