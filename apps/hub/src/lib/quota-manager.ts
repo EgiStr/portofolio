@@ -136,9 +136,14 @@ export async function finalizeUpload(params: {
   } = params;
 
   // Create file record
+  const slug = `${name
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-|-$/g, "")}-${Date.now().toString(36)}`;
   const file = await prisma.eDSFile.create({
     data: {
       name,
+      slug,
       mimeType,
       size,
       googleFileId,
