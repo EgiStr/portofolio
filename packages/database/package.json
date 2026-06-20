@@ -19,7 +19,6 @@
     "clean": "rm -rf dist node_modules .turbo"
   },
   "dependencies": {
-    "@ecosystem/config": "workspace:*",
     "@prisma/client": "^5.22.0"
   },
   "devDependencies": {
