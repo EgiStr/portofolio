@@ -8,6 +8,9 @@ import { cn } from "../lib/utils";
 
 interface ResumeUploadProps {
   value: string;
+  /** Optional persisted display filename. If provided, used as the initial
+   *  display value so the UI doesn't flicker to a URL-derived name on mount. */
+  fileName?: string;
   onChange: (url: string, meta?: { fileName: string; size: number }) => void;
   label?: string;
   bucket?: string;
@@ -30,6 +33,7 @@ const ACCEPTED_MIME = "application/pdf";
  */
 export function ResumeUpload({
   value,
+  fileName: initialFileName,
   onChange,
   label = "Resume / CV",
   bucket = "eggisatria.dev",
@@ -37,9 +41,15 @@ export function ResumeUpload({
   className,
 }: ResumeUploadProps) {
   const [uploading, setUploading] = React.useState(false);
-  const [fileName, setFileName] = React.useState<string>("");
+  const [fileName, setFileName] = React.useState<string>(initialFileName ?? "");
   const [error, setError] = React.useState<string>("");
   const inputRef = React.useRef<HTMLInputElement>(null);
+
+  // Keep local display name in sync with persisted value (e.g. after form
+  // fetch finishes, or after the parent clears the field).
+  React.useEffect(() => {
+    setFileName(initialFileName ?? "");
+  }, [initialFileName]);
 
   async function handleUpload(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];

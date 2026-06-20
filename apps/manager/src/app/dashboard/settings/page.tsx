@@ -27,6 +27,7 @@ type Tab = "profile" | "landing" | "blog" | "social" | "seo";
 interface Settings {
   // Profile
   name: string;
+  jobTitle: string;
   email: string;
   bio: string;
   avatar: string;
@@ -40,6 +41,7 @@ interface Settings {
   aboutTitle: string;
   aboutDescription: string;
   resumeUrl: string;
+  resumeFileName: string;
 
   // Blog
   blogTitle: string;
@@ -77,9 +79,8 @@ const tabs: { id: Tab; label: string; icon: React.ReactNode }[] = [
 
 export default function SettingsPage() {
   const [activeTab, setActiveTab] = useState<Tab>("profile");
-  // `defaultSettings` comes from `@ecosystem/config` (single source of truth).
-  // It includes `jobTitle` + `resumeFileName` which the local form doesn't
-  // surface yet, so cast to the UI-shaped `Settings`.
+  // `defaultSettings` from `@ecosystem/config` is the single source of truth
+  // for shape + defaults. It already matches the `Settings` interface above.
   const [settings, setSettings] = useState<Settings>(
     defaultSettings as unknown as Settings,
   );
@@ -195,15 +196,25 @@ export default function SettingsPage() {
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="email">Email</Label>
+                  <Label htmlFor="jobTitle">Job Title</Label>
                   <Input
-                    id="email"
-                    type="email"
-                    value={settings.email}
-                    onChange={(e) => handleChange("email", e.target.value)}
-                    placeholder="your@email.com"
+                    id="jobTitle"
+                    value={settings.jobTitle}
+                    onChange={(e) => handleChange("jobTitle", e.target.value)}
+                    placeholder="Full Stack Developer"
                   />
                 </div>
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="email">Email</Label>
+                <Input
+                  id="email"
+                  type="email"
+                  value={settings.email}
+                  onChange={(e) => handleChange("email", e.target.value)}
+                  placeholder="your@email.com"
+                />
               </div>
 
               <div className="space-y-2">
@@ -333,7 +344,13 @@ export default function SettingsPage() {
               <div className="space-y-2">
                 <ResumeUpload
                   value={settings.resumeUrl}
-                  onChange={(url) => handleChange("resumeUrl", url)}
+                  fileName={settings.resumeFileName}
+                  onChange={(url, meta) => {
+                    handleChange("resumeUrl", url);
+                    // Persist the display filename so it survives page reloads
+                    // and shows on the landing page instead of the URL tail.
+                    handleChange("resumeFileName", meta?.fileName ?? "");
+                  }}
                   bucket="eggisatria.dev"
                   folder="resumes"
                   label="Resume / CV"
