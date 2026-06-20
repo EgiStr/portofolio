@@ -61,7 +61,7 @@ export async function generateMetadata(): Promise<Metadata> {
       siteName: settings.name,
       images: [
         {
-          url: "/opengraph-image.png",
+          url: "https://eggisatria.dev/opengraph-image.png",
           width: 1200,
           height: 630,
           alt: `${settings.name} - ${settings.jobTitle}`,
@@ -75,15 +75,12 @@ export async function generateMetadata(): Promise<Metadata> {
       creator: settings.twitter
         ? `@${settings.twitter.replace(/^@/, "")}`
         : "@egistr",
-      images: ["/twitter-image.png"],
+      images: ["https://eggisatria.dev/twitter-image.png"],
     },
     icons: {
       icon: "/icon.png",
       shortcut: "/icon.png",
       apple: "/apple-icon.png",
-    },
-    verification: {
-      google: "google-site-verification=YOUR_CODE_HERE",
     },
   };
 }
