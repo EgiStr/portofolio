@@ -421,3 +421,54 @@ model ApiKey {
   @@index([keyHash])
   @@map("eds_api_keys")
 }
+
+// ============================================
+// CONTACT FORM SUBMISSIONS
+// ============================================
+
+model ContactSubmission {
+  id        String   @id @default(cuid())
+  name      String
+  email     String
+  message   String   @db.Text
+  source    String?  // "landing", "blog", etc. — for attribution
+  ipAddress String?
+  userAgent String?
+
+  // Lifecycle
+  read      Boolean  @default(false)
+  archived  Boolean  @default(false)
+  repliedAt DateTime?
+  notes     String?  @db.Text
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([read, createdAt])
+  @@index([email])
+  @@map("contact_submissions")
+}
+
+// ============================================
+// NEWSLETTER SUBSCRIBERS
+// ============================================
+
+model NewsletterSubscriber {
+  id    String  @id @default(cuid())
+  email String  @unique
+  name  String?
+
+  // Source tracking
+  source String? // "landing-footer", "blog-sidebar", "landing-inline", etc.
+
+  // Lifecycle
+  confirmedAt   DateTime?
+  unsubscribedAt DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([confirmedAt])
+  @@index([unsubscribedAt])
+  @@map("newsletter_subscribers")
+}

@@ -19,13 +19,13 @@ export default function AuthenticationPage() {
 
       <h2>Obtaining an API Key</h2>
       <p>
-        API keys are managed through the Manager Dashboard, not the EDS
-        dashboard directly.
+        API keys are managed through the Manager Dashboard at{" "}
+        <code>/dashboard/api-keys</code>.
       </p>
 
       <ol>
         <li>
-          Access the Manager Dashboard at <code>/dashboard/api-keys</code>
+          Open the Manager Dashboard and go to <code>/dashboard/api-keys</code>
         </li>
         <li>
           Click <strong>"Generate New Key"</strong>
@@ -35,10 +35,23 @@ export default function AuthenticationPage() {
           Click <strong>"Generate Key"</strong>
         </li>
         <li>
-          <strong>Copy the key immediately</strong> - it will only be displayed
+          <strong>Copy the key immediately</strong> — it will only be displayed
           once!
         </li>
       </ol>
+
+      <div className="not-prose my-6 p-4 rounded-lg border-l-4 border-blue-500 bg-blue-50 dark:bg-blue-900/20">
+        <p className="font-medium text-blue-800 dark:text-blue-200">
+          One key, every API
+        </p>
+        <p className="text-sm text-blue-700 dark:text-blue-300 mt-1">
+          The same API key authenticates against <strong>every</strong>{" "}
+          authenticated endpoint across the ecosystem —{" "}
+          <code>/api/v1/projects</code> &amp; <code>/api/v1/settings</code> on
+          the landing app, <code>/api/v1/posts</code> on the blog app, and the
+          storage APIs on EDS. Generate it once, use it everywhere.
+        </p>
+      </div>
 
       <div className="not-prose my-6 p-4 rounded-lg border-l-4 border-amber-500 bg-amber-50 dark:bg-amber-900/20">
         <p className="font-medium text-amber-800 dark:text-amber-200">

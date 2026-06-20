@@ -31,6 +31,11 @@ export const docSections: DocSection[] = [
     items: [
       { title: "Authentication", href: "/api/authentication" },
       { title: "Upload Endpoint", href: "/api/upload" },
+      { title: "Projects", href: "/api/projects" },
+      { title: "Blog Posts", href: "/api/posts" },
+      { title: "Site Settings", href: "/api/settings" },
+      { title: "Contact Form", href: "/api/contact" },
+      { title: "Newsletter", href: "/api/newsletter" },
       { title: "Response Format", href: "/api/responses" },
     ],
   },

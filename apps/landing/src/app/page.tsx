@@ -27,6 +27,7 @@ const Contact = dynamic(
   () => import("@/components/sections/contact").then((mod) => mod.Contact),
   { ssr: true },
 );
+import { Newsletter } from "@/components/sections/newsletter";
 
 export const revalidate = 60; // Revalidate every 60 seconds
 
@@ -123,6 +124,7 @@ export default async function Home() {
         <Experience experiences={experiences} />
         <Projects initialProjects={projects as any} />
         <Certifications certifications={certifications as any} />
+        <Newsletter />
         <Contact />
       </main>
       <Footer />

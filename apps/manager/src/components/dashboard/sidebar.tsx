@@ -17,6 +17,8 @@ import {
   Award,
   Key,
   X,
+  Mail,
+  Inbox,
 } from "lucide-react";
 import { Button } from "@ecosystem/ui";
 
@@ -28,6 +30,8 @@ const sidebarLinks = [
   { name: "Skills", href: "/dashboard/skills", icon: Code },
   { name: "Certifications", href: "/dashboard/certifications", icon: Award },
   { name: "Resume", href: "/dashboard/resume", icon: Scroll },
+  { name: "Newsletter", href: "/dashboard/newsletter", icon: Mail },
+  { name: "Contact", href: "/dashboard/contact", icon: Inbox },
   { name: "API Keys", href: "/dashboard/api-keys", icon: Key },
   { name: "Analytics", href: "/dashboard/analytics", icon: BarChart3 },
   { name: "Settings", href: "/dashboard/settings", icon: Settings },

@@ -70,3 +70,7 @@ export {
 } from "./components/dialog";
 export { Alert, AlertTitle, AlertDescription } from "./components/alert";
 export { ResumeUpload } from "./components/resume-upload";
+export {
+  NewsletterSignup,
+  type NewsletterSignupProps,
+} from "./components/newsletter-signup";
