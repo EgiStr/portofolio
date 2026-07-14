@@ -24,6 +24,13 @@ const nextConfig = {
   experimental: {
     optimizePackageImports: ["lucide-react"],
   },
+  // Don't bundle Prisma — keep it external so Node.js async_hooks works in serverless
+  serverExternalPackages: ["@prisma/client", "prisma"],
+  // Ensure Prisma engine files are copied to serverless output
+  outputFileTracingIncludes: {
+    "/blog/**/*": ["./node_modules/.prisma/client/**/*"],
+    "/*": ["./node_modules/.prisma/client/**/*"],
+  },
   async headers() {
     const cspHeader = `
       default-src 'self';
@@ -74,8 +81,10 @@ const nextConfig = {
       },
     ];
   },
-  webpack: (config) => {
-    config.plugins.push(new PrismaPlugin());
+  webpack: (config, { isServer }) => {
+    if (isServer) {
+      config.plugins.push(new PrismaPlugin());
+    }
     return config;
   },
 };
