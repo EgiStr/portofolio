@@ -9,18 +9,23 @@ import { CodeBlock } from "./code-block";
 
 // Wrap rehype-pretty-code so a Shiki crash doesn't kill the entire page.
 // Falls back to un-highlighted code blocks.
-const safeRehypePrettyCode: typeof rehypePrettyCode = (options) => (tree, file) => {
-  try {
-    const plugin = rehypePrettyCode(options);
-    if (typeof plugin === "function") {
-      return plugin(tree, file);
+const safeRehypePrettyCode: typeof rehypePrettyCode =
+  (options) => (tree, file) => {
+    try {
+      const plugin = rehypePrettyCode(options);
+      if (typeof plugin === "function") {
+        // Transformer type expects 3 args but react-markdown passes 2; satisfy TS.
+        return (plugin as (t: typeof tree, f: typeof file) => void)(tree, file);
+      }
+      return tree;
+    } catch (e) {
+      console.error(
+        "[MarkdownContent] rehype-pretty-code failed, rendering without highlighting:",
+        e,
+      );
+      return tree;
     }
-    return tree;
-  } catch (e) {
-    console.error("[MarkdownContent] rehype-pretty-code failed, rendering without highlighting:", e);
-    return tree;
-  }
-};
+  };
 
 interface MarkdownContentProps {
   content: string;
@@ -49,12 +54,16 @@ export function MarkdownContent({ content }: MarkdownContentProps) {
         ]}
         components={{
           pre: ({ node, className, children, ...props }) => {
-            const codeElement = Array.isArray(children) ? children[0] : children;
+            const codeElement = Array.isArray(children)
+              ? children[0]
+              : children;
             const lang = (codeElement as React.ReactElement)?.props?.className
               ?.replace("language-", "")
               ?.split(" ")[0];
             const codeContent =
-              (codeElement as React.ReactElement)?.props?.children?.toString() || "";
+              (
+                codeElement as React.ReactElement
+              )?.props?.children?.toString() || "";
 
             return (
               <CodeBlock lang={lang} code={codeContent}>
