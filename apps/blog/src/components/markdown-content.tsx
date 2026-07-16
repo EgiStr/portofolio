@@ -19,7 +19,8 @@ function safeRehypePrettyCode(options?: any): any {
     try {
       const plugin = rehypePrettyCode(options);
       if (typeof plugin === "function") {
-        const result = plugin(tree, _file);
+        // Transformer type expects 3 args but react-markdown passes 2; satisfy TS.
+        const result = (plugin as Function)(tree, _file);
         // If the transformer returned a Promise (async), catch its rejection
         if (result && typeof result.then === "function") {
           return result.catch((e: unknown) => {
