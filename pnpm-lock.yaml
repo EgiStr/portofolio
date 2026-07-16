@@ -50,6 +50,9 @@ importers:
       '@next/mdx':
         specifier: ^15.1.0
         version: 15.5.9(@mdx-js/loader@3.1.1)(@mdx-js/react@3.1.1(@types/react@18.3.27)(react@18.3.1))
+      '@prisma/client':
+        specifier: ^5.22.0
+        version: 5.22.0(prisma@5.22.0)
       date-fns:
         specifier: ^3.6.0
         version: 3.6.0
@@ -126,6 +129,9 @@ importers:
       postcss:
         specifier: ^8
         version: 8.5.6
+      prisma:
+        specifier: ^5.22.0
+        version: 5.22.0
       tailwindcss:
         specifier: ^3.4.0
         version: 3.4.19(yaml@2.8.2)

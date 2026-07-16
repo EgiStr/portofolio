@@ -1,0 +1,462 @@
+// Prisma schema for the blog app
+// Copied from packages/database/prisma/schema.prisma
+// This ensures Prisma engine binaries are generated locally for Vercel serverless
+
+generator client {
+  provider      = "prisma-client-js"
+  binaryTargets = ["native", "rhel-openssl-3.0.x"]
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+// ============================================
+// USER & AUTHENTICATION
+// ============================================
+
+model User {
+  id            String    @id @default(cuid())
+  email         String    @unique
+  name          String?
+  password      String?
+  image         String?
+  role          UserRole  @default(ADMIN)
+  emailVerified DateTime?
+
+  accounts      Account[]
+  sessions      Session[]
+  projects      Project[]
+  posts         BlogPost[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("users")
+}
+
+enum UserRole {
+  ADMIN
+  EDITOR
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+  @@map("accounts")
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("sessions")
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+  @@map("verification_tokens")
+}
+
+// ============================================
+// PROJECTS
+// ============================================
+
+model Project {
+  id               String   @id @default(cuid())
+  title            String
+  slug             String   @unique
+  description      String   @db.Text
+  longDescription  String?  @db.Text
+  imageUrl         String?
+  liveUrl          String?
+  githubUrl        String?
+  featured         Boolean  @default(false)
+  displayOrder     Int      @default(0)
+  status           ProjectStatus @default(DRAFT)
+  clicks           Int      @default(0)
+
+  techStack        ProjectTech[]
+  authorId         String
+  author           User     @relation(fields: [authorId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("projects")
+}
+
+enum ProjectStatus {
+  DRAFT
+  PUBLISHED
+  ARCHIVED
+}
+
+model ProjectTech {
+  id        String  @id @default(cuid())
+  name      String
+  icon      String?
+
+  projectId String
+  project   Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  @@map("project_techs")
+}
+
+// ============================================
+// BLOG POSTS
+// ============================================
+
+model BlogPost {
+  id           String   @id @default(cuid())
+  slug         String   @unique
+  title        String
+  excerpt      String?  @db.Text
+  content      String   @db.Text
+  coverImage   String?
+  published    Boolean  @default(false)
+  publishedAt  DateTime?
+  readingTime  Int      @default(0)
+
+  authorId     String
+  author       User     @relation(fields: [authorId], references: [id])
+  views        BlogView[]
+  tags         BlogTag[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("blog_posts")
+}
+
+model BlogTag {
+  id    String @id @default(cuid())
+  name  String
+  slug  String @unique
+
+  posts BlogPost[]
+
+  @@map("blog_tags")
+}
+
+model BlogView {
+  id        String   @id @default(cuid())
+  postId    String
+  visitorIp String?
+  userAgent String?
+
+  post      BlogPost @relation(fields: [postId], references: [id], onDelete: Cascade)
+
+  viewedAt  DateTime @default(now())
+
+  @@map("blog_views")
+}
+
+// ============================================
+// SITE CONFIGURATION
+// ============================================
+
+model SiteConfig {
+  id    String @id @default(cuid())
+  key   String @unique
+  value String @db.Text
+
+  updatedAt DateTime @updatedAt
+
+  @@map("site_configs")
+}
+
+// ============================================
+// EXPERIENCE / WORK HISTORY
+// ============================================
+
+model Experience {
+  id          String   @id @default(cuid())
+  company     String
+  position    String
+  description String?  @db.Text
+  startDate   DateTime
+  endDate     DateTime?
+  current     Boolean  @default(false)
+  location    String?
+  companyUrl  String?
+  companyLogo String?
+  order       Int      @default(0)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("experiences")
+}
+
+// ============================================
+// SKILLS
+// ============================================
+
+model Skill {
+  id       String     @id @default(cuid())
+  name     String
+  icon     String?
+  category SkillCategory @default(OTHER)
+  level    Int        @default(50)
+  order    Int        @default(0)
+
+  certifications CertificationSkill[]
+
+  createdAt DateTime @default(now())
+
+  @@map("skills")
+}
+
+enum SkillCategory {
+  LANGUAGE
+  FRAMEWORK
+  DATABASE
+  DEVOPS
+  TOOL
+  OTHER
+}
+
+// ============================================
+// CERTIFICATIONS
+// ============================================
+
+model Certification {
+  id               String   @id @default(cuid())
+  name             String
+  organization     String
+  issueDate        DateTime
+  credentialId     String?
+  verificationUrl  String?
+  organizationLogo String?
+  certificateFile  String?
+  category         CertificationCategory @default(OTHER)
+  displayOrder     Int      @default(0)
+
+  skills           CertificationSkill[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("certifications")
+}
+
+enum CertificationCategory {
+  MACHINE_LEARNING
+  CLOUD_COMPUTING
+  DATA_ANALYTICS
+  WEB_DEVELOPMENT
+  MOBILE_DEVELOPMENT
+  DEVOPS
+  CYBERSECURITY
+  DATABASE
+  OTHER
+}
+
+model CertificationSkill {
+  id              String        @id @default(cuid())
+  certificationId String
+  skillId         String
+
+  certification   Certification @relation(fields: [certificationId], references: [id], onDelete: Cascade)
+  skill           Skill         @relation(fields: [skillId], references: [id], onDelete: Cascade)
+
+  @@unique([certificationId, skillId])
+  @@map("certification_skills")
+}
+
+// ============================================
+// EDS - STORAGE NODES
+// ============================================
+
+model StorageNode {
+  id                    String    @id @default(cuid())
+  email                 String    @unique
+  accessTokenEncrypted  String    @db.Text
+  refreshTokenEncrypted String    @db.Text
+  totalSpace            BigInt    @default(16106127360)
+  usedSpace             BigInt    @default(0)
+  reservedSpace         BigInt    @default(0)
+  isActive              Boolean   @default(true)
+  tokenExpiresAt        DateTime?
+  lastSyncAt            DateTime?
+
+  files                 EDSFile[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("eds_storage_nodes")
+}
+
+// ============================================
+// EDS - VIRTUAL FOLDERS
+// ============================================
+
+model EDSFolder {
+  id        String      @id @default(cuid())
+  name      String
+  slug      String
+  path      String
+  parentId  String?
+  parent    EDSFolder?  @relation("FolderHierarchy", fields: [parentId], references: [id])
+  children  EDSFolder[] @relation("FolderHierarchy")
+  files     EDSFile[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([parentId, slug])
+  @@index([slug])
+  @@index([path])
+  @@map("eds_folders")
+}
+
+// ============================================
+// EDS - FILES
+// ============================================
+
+model EDSFile {
+  id           String       @id @default(cuid())
+  name         String
+  slug         String
+  mimeType     String
+  size         BigInt
+  sha256Hash   String?
+  googleFileId String
+
+  nodeId       String
+  node         StorageNode  @relation(fields: [nodeId], references: [id])
+  folderId     String?
+  folder       EDSFolder?   @relation(fields: [folderId], references: [id])
+
+  uploadedAt   DateTime     @default(now())
+  deletedAt    DateTime?
+
+  @@unique([folderId, slug])
+  @@index([slug])
+  @@index([nodeId])
+  @@map("eds_files")
+}
+
+// ============================================
+// EDS - UPLOAD RESERVATIONS
+// ============================================
+
+model EDSReservation {
+  id        String   @id @default(cuid())
+  nodeId    String
+  size      BigInt
+  expiresAt DateTime
+
+  createdAt DateTime @default(now())
+
+  @@map("eds_reservations")
+}
+
+// ============================================
+// EDS - ACTIVITY LOG
+// ============================================
+
+model EDSActivityLog {
+  id         String   @id @default(cuid())
+  action     String
+  targetType String
+  targetId   String?
+  metadata   Json?
+
+  createdAt  DateTime @default(now())
+
+  @@map("eds_activity_logs")
+}
+
+// ============================================
+// EDS - API KEYS (External Access)
+// ============================================
+
+model ApiKey {
+  id          String   @id @default(cuid())
+  name        String
+  keyPrefix   String
+  keyHash     String
+  lastUsedAt  DateTime?
+  isActive    Boolean  @default(true)
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([keyHash])
+  @@map("eds_api_keys")
+}
+
+// ============================================
+// CONTACT FORM SUBMISSIONS
+// ============================================
+
+model ContactSubmission {
+  id        String   @id @default(cuid())
+  name      String
+  email     String
+  message   String   @db.Text
+  source    String?
+  ipAddress String?
+  userAgent String?
+
+  read      Boolean  @default(false)
+  archived  Boolean  @default(false)
+  repliedAt DateTime?
+  notes     String?  @db.Text
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([read, createdAt])
+  @@index([email])
+  @@map("contact_submissions")
+}
+
+// ============================================
+// NEWSLETTER SUBSCRIBERS
+// ============================================
+
+model NewsletterSubscriber {
+  id    String  @id @default(cuid())
+  email String  @unique
+  name  String?
+
+  source String?
+
+  confirmedAt   DateTime?
+  unsubscribedAt DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([confirmedAt])
+  @@index([unsubscribedAt])
+  @@map("newsletter_subscribers")
+}
