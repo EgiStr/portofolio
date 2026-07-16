@@ -1,5 +1,4 @@
 import createMDX from "@next/mdx";
-import { PrismaPlugin } from "@prisma/nextjs-monorepo-workaround-plugin";
 import rehypeSlug from "rehype-slug";
 import rehypeAutolinkHeadings from "rehype-autolink-headings";
 import remarkGfm from "remark-gfm";
@@ -24,13 +23,9 @@ const nextConfig = {
   experimental: {
     optimizePackageImports: ["lucide-react"],
   },
-  // Don't bundle Prisma — keep it external so Node.js async_hooks works in serverless
-  serverExternalPackages: ["@prisma/client", "prisma"],
-  // Ensure Prisma engine files are copied to serverless output
-  outputFileTracingIncludes: {
-    "/blog/**/*": ["./node_modules/.prisma/client/**/*"],
-    "/*": ["./node_modules/.prisma/client/**/*"],
-  },
+  // Keep Prisma external — Next.js 15 handles this natively via serverExternalPackages
+  // DO NOT use @prisma/nextjs-monorepo-workaround-plugin — it conflicts with Next.js 15
+  serverExternalPackages: ["@prisma/client"],
   async headers() {
     const cspHeader = `
       default-src 'self';
@@ -81,12 +76,7 @@ const nextConfig = {
       },
     ];
   },
-  webpack: (config, { isServer }) => {
-    if (isServer) {
-      config.plugins.push(new PrismaPlugin());
-    }
-    return config;
-  },
+  // No custom webpack needed — serverExternalPackages handles Prisma correctly
 };
 
 const withMDX = createMDX({

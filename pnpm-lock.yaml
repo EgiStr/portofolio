@@ -50,9 +50,6 @@ importers:
       '@next/mdx':
         specifier: ^15.1.0
         version: 15.5.9(@mdx-js/loader@3.1.1)(@mdx-js/react@3.1.1(@types/react@18.3.27)(react@18.3.1))
-      '@prisma/nextjs-monorepo-workaround-plugin':
-        specifier: ^7.2.0
-        version: 7.2.0
       date-fns:
         specifier: ^3.6.0
         version: 3.6.0
