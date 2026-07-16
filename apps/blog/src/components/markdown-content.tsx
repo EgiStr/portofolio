@@ -7,6 +7,17 @@ import rehypeSlug from "rehype-slug";
 import rehypeAutolinkHeadings from "rehype-autolink-headings";
 import { CodeBlock } from "./code-block";
 
+// Wrap rehype-pretty-code so a Shiki crash doesn't kill the entire page.
+// Falls back to un-highlighted code blocks.
+const safeRehypePrettyCode: typeof rehypePrettyCode = (options) => (tree, file) => {
+  try {
+    return rehypePrettyCode(options)(tree, file);
+  } catch (e) {
+    console.error("[MarkdownContent] rehype-pretty-code failed, rendering without highlighting:", e);
+    return tree;
+  }
+};
+
 interface MarkdownContentProps {
   content: string;
 }
@@ -22,7 +33,7 @@ export function MarkdownContent({ content }: MarkdownContentProps) {
         remarkPlugins={[remarkGfm, remarkMath]}
         rehypePlugins={[
           [
-            rehypePrettyCode,
+            safeRehypePrettyCode,
             {
               theme: "github-dark",
               keepBackground: false,
@@ -34,12 +45,12 @@ export function MarkdownContent({ content }: MarkdownContentProps) {
         ]}
         components={{
           pre: ({ node, className, children, ...props }) => {
-            // Try to extract the code content and language from children
-            const codeElement = children as React.ReactElement;
-            const lang = codeElement?.props?.className
+            const codeElement = Array.isArray(children) ? children[0] : children;
+            const lang = (codeElement as React.ReactElement)?.props?.className
               ?.replace("language-", "")
               ?.split(" ")[0];
-            const codeContent = codeElement?.props?.children?.toString() || "";
+            const codeContent =
+              (codeElement as React.ReactElement)?.props?.children?.toString() || "";
 
             return (
               <CodeBlock lang={lang} code={codeContent}>
@@ -72,7 +83,6 @@ export function MarkdownContent({ content }: MarkdownContentProps) {
               }
             />
           ),
-          // Inline code styling (block code handled by pre wrapper above)
           code: ({ node, className, children, ...props }) => {
             const match = /language-(\w+)/.exec(className || "");
             const isInline = !match;
