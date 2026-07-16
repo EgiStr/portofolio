@@ -5,6 +5,8 @@ import rehypeKatex from "rehype-katex";
 import rehypePrettyCode from "rehype-pretty-code";
 import rehypeSlug from "rehype-slug";
 import rehypeAutolinkHeadings from "rehype-autolink-headings";
+import type { Transformer } from "unified";
+import type { Root } from "hast";
 import { CodeBlock } from "./code-block";
 
 // Wrap rehype-pretty-code so a Shiki crash doesn't kill the entire page.
@@ -12,8 +14,10 @@ import { CodeBlock } from "./code-block";
 // NOTE: rehype-pretty-code@0.14.1 returns an *async* transformer (it calls
 // getSingletonHighlighter which is async). We must catch both sync errors
 // from plugin init AND async rejections from the returned Promise.
-const safeRehypePrettyCode: typeof rehypePrettyCode =
-  (options) => (tree, file) => {
+function safeRehypePrettyCode(
+  options?: Parameters<typeof rehypePrettyCode>[0],
+): Transformer<Root, Root> {
+  return (tree, file) => {
     try {
       const plugin = rehypePrettyCode(options);
       if (typeof plugin === "function") {
@@ -30,9 +34,9 @@ const safeRehypePrettyCode: typeof rehypePrettyCode =
               e,
             );
             return tree;
-          });
+          }) as Promise<Root>;
         }
-        return result;
+        return tree;
       }
       return tree;
     } catch (e) {
@@ -43,6 +47,7 @@ const safeRehypePrettyCode: typeof rehypePrettyCode =
       return tree;
     }
   };
+}
 
 interface MarkdownContentProps {
   content: string;
