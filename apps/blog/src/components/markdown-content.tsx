@@ -9,13 +9,30 @@ import { CodeBlock } from "./code-block";
 
 // Wrap rehype-pretty-code so a Shiki crash doesn't kill the entire page.
 // Falls back to un-highlighted code blocks.
+// NOTE: rehype-pretty-code@0.14.1 returns an *async* transformer (it calls
+// getSingletonHighlighter which is async). We must catch both sync errors
+// from plugin init AND async rejections from the returned Promise.
 const safeRehypePrettyCode: typeof rehypePrettyCode =
   (options) => (tree, file) => {
     try {
       const plugin = rehypePrettyCode(options);
       if (typeof plugin === "function") {
         // Transformer type expects 3 args but react-markdown passes 2; satisfy TS.
-        return (plugin as (t: typeof tree, f: typeof file) => void)(tree, file);
+        const result = (plugin as (t: typeof tree, f: typeof file) => unknown)(
+          tree,
+          file,
+        );
+        // If the transformer returned a Promise (async), catch its rejection
+        if (result && typeof (result as Promise<unknown>).then === "function") {
+          return (result as Promise<unknown>).catch((e: unknown) => {
+            console.error(
+              "[MarkdownContent] rehype-pretty-code failed (async), rendering without highlighting:",
+              e,
+            );
+            return tree;
+          });
+        }
+        return result;
       }
       return tree;
     } catch (e) {
