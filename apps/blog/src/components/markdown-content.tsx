@@ -11,7 +11,11 @@ import { CodeBlock } from "./code-block";
 // Falls back to un-highlighted code blocks.
 const safeRehypePrettyCode: typeof rehypePrettyCode = (options) => (tree, file) => {
   try {
-    return rehypePrettyCode(options)(tree, file);
+    const plugin = rehypePrettyCode(options);
+    if (typeof plugin === "function") {
+      return plugin(tree, file);
+    }
+    return tree;
   } catch (e) {
     console.error("[MarkdownContent] rehype-pretty-code failed, rendering without highlighting:", e);
     return tree;
