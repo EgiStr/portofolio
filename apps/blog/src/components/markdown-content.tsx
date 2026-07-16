@@ -5,8 +5,6 @@ import rehypeKatex from "rehype-katex";
 import rehypePrettyCode from "rehype-pretty-code";
 import rehypeSlug from "rehype-slug";
 import rehypeAutolinkHeadings from "rehype-autolink-headings";
-import type { Transformer } from "unified";
-import type { Root } from "hast";
 import { CodeBlock } from "./code-block";
 
 // Wrap rehype-pretty-code so a Shiki crash doesn't kill the entire page.
@@ -14,27 +12,23 @@ import { CodeBlock } from "./code-block";
 // NOTE: rehype-pretty-code@0.14.1 returns an *async* transformer (it calls
 // getSingletonHighlighter which is async). We must catch both sync errors
 // from plugin init AND async rejections from the returned Promise.
-function safeRehypePrettyCode(
-  options?: Parameters<typeof rehypePrettyCode>[0],
-): Transformer<Root, Root> {
-  return (tree, file) => {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function safeRehypePrettyCode(options?: any): any {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  return (tree: any, _file: any) => {
     try {
       const plugin = rehypePrettyCode(options);
       if (typeof plugin === "function") {
-        // Transformer type expects 3 args but react-markdown passes 2; satisfy TS.
-        const result = (plugin as (t: typeof tree, f: typeof file) => unknown)(
-          tree,
-          file,
-        );
+        const result = plugin(tree, _file);
         // If the transformer returned a Promise (async), catch its rejection
-        if (result && typeof (result as Promise<unknown>).then === "function") {
-          return (result as Promise<unknown>).catch((e: unknown) => {
+        if (result && typeof result.then === "function") {
+          return result.catch((e: unknown) => {
             console.error(
               "[MarkdownContent] rehype-pretty-code failed (async), rendering without highlighting:",
               e,
             );
             return tree;
-          }) as Promise<Root>;
+          });
         }
         return tree;
       }
