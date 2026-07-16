@@ -2,47 +2,9 @@ import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import remarkMath from "remark-math";
 import rehypeKatex from "rehype-katex";
-import rehypePrettyCode from "rehype-pretty-code";
 import rehypeSlug from "rehype-slug";
 import rehypeAutolinkHeadings from "rehype-autolink-headings";
 import { CodeBlock } from "./code-block";
-
-// Wrap rehype-pretty-code so a Shiki crash doesn't kill the entire page.
-// Falls back to un-highlighted code blocks.
-// NOTE: rehype-pretty-code@0.14.1 returns an *async* transformer (it calls
-// getSingletonHighlighter which is async). We must catch both sync errors
-// from plugin init AND async rejections from the returned Promise.
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-function safeRehypePrettyCode(options?: any): any {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  return (tree: any, _file: any) => {
-    try {
-      const plugin = rehypePrettyCode(options);
-      if (typeof plugin === "function") {
-        // Transformer type expects 3 args but react-markdown passes 2; satisfy TS.
-        const result = (plugin as Function)(tree, _file);
-        // If the transformer returned a Promise (async), catch its rejection
-        if (result && typeof result.then === "function") {
-          return result.catch((e: unknown) => {
-            console.error(
-              "[MarkdownContent] rehype-pretty-code failed (async), rendering without highlighting:",
-              e,
-            );
-            return tree;
-          });
-        }
-        return tree;
-      }
-      return tree;
-    } catch (e) {
-      console.error(
-        "[MarkdownContent] rehype-pretty-code failed, rendering without highlighting:",
-        e,
-      );
-      return tree;
-    }
-  };
-}
 
 interface MarkdownContentProps {
   content: string;
@@ -58,13 +20,6 @@ export function MarkdownContent({ content }: MarkdownContentProps) {
       <ReactMarkdown
         remarkPlugins={[remarkGfm, remarkMath]}
         rehypePlugins={[
-          [
-            safeRehypePrettyCode,
-            {
-              theme: "github-dark",
-              keepBackground: false,
-            },
-          ],
           rehypeSlug,
           [rehypeAutolinkHeadings, { behavior: "wrap" }],
           rehypeKatex,
@@ -94,7 +49,6 @@ export function MarkdownContent({ content }: MarkdownContentProps) {
             );
           },
           img: ({ node, ...props }) => (
-            // eslint-disable-next-line @next/next/no-img-element, jsx-a11y/alt-text
             <img
               {...props}
               className="w-full h-auto rounded-xl my-8 shadow-md border border-border/50"
@@ -119,7 +73,7 @@ export function MarkdownContent({ content }: MarkdownContentProps) {
             if (isInline) {
               return (
                 <code
-                  className="bg-secondary px-1.5 py-0.5 rounded text-sm text-primary before:content-none after:content-none"
+                  className="bg-secondary px-1.5 py-0.5 rounded text-sm text-primary"
                   {...props}
                 >
                   {children}
