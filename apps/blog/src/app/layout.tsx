@@ -98,8 +98,8 @@ export default async function RootLayout({
           </>
         )}
         <div
-          className="mx-auto w-full max-w-6xl px-4 py-8"
-          data-blog-shell="wide"
+          className="mx-auto w-full max-w-2xl px-4 py-8"
+          data-blog-shell="narrow"
         >
           {/* Navigation */}
           <header className="mx-auto flex w-full max-w-2xl items-center justify-between mb-16">

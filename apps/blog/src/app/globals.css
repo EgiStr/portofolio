@@ -69,14 +69,28 @@ pre code {
   @apply bg-transparent p-0;
 }
 
-/* Blog shell contract (Direction A): the root shell is wide (max-w-6xl) so
-   the article row can break out; non-article pages stay narrow by default.
-   The article opts out via [data-article-shell]; fixed overlays (reading
+/* Blog shell contract (narrow-stable, Direction A): RootLayout stays
+   max-w-2xl (data-blog-shell="narrow") so home/list/about are narrow by
+   default with zero wide leak (S7). Only the article opts into wide via
+   [data-article-shell="wide"], which breaks out of the narrow parent with
+   symmetric margins centered on the viewport. Fixed overlays (reading
    progress) are excluded so they keep full-viewport width. (S1/S7) */
-[data-blog-shell] main > :not([data-article-shell]):not(.fixed) {
+[data-blog-shell="narrow"] main > :not([data-article-shell]):not(.fixed) {
   margin-inline: auto;
   width: 100%;
   max-width: 42rem;
+}
+
+/* Article-only wide breakout: centered min(72rem, 100vw - 2rem) shell that
+   escapes the 42rem parent without page-level horizontal overflow. The
+   symmetric margin formula (parent 100% minus desired width) / 2 goes
+   negative exactly when the wide shell exceeds the narrow parent, keeping it
+   centered on the viewport (parent itself is mx-auto). Non-article pages
+   never match this selector, so they cannot go wide. (S1/S7) */
+[data-blog-shell="narrow"] main > [data-article-shell="wide"] {
+  width: min(72rem, 100vw - 2rem);
+  max-width: 72rem;
+  margin-inline: calc((100% - min(72rem, 100vw - 2rem)) / 2);
 }
 
 /* Short-post fallback: when the TOC rail is empty (TOC returns null), the

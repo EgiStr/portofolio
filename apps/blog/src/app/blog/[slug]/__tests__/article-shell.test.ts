@@ -15,12 +15,21 @@ function read(p: string): string {
 describe("article shell contract (S1/S2/S5/S7/S8/S9)", () => {
   it("S1: article renders a wide shell escaping max-w-2xl", () => {
     const page = read(ARTICLE_PAGE_PATH);
-    // Wide article shell marker + token (max-w-6xl family)
+    // Wide article shell marker + token (max-w-6xl family) lives ONLY in article
     expect(page).toMatch(/data-article-shell/);
     expect(page).toMatch(/max-w-6xl/);
-    // Layout must expose a wide shell (article opt-out), not stay purely max-w-2xl
+    // RootLayout must stay narrow-stable: no wide tokens at shell level (S7 leak guard)
     const layout = read(LAYOUT_PATH);
-    expect(layout).toMatch(/max-w-6xl/);
+    expect(layout).toMatch(/max-w-2xl/);
+    expect(layout).toMatch(/data-blog-shell="narrow"/);
+    expect(layout).not.toMatch(/max-w-6xl/);
+    expect(layout).not.toMatch(/max-w-5xl/);
+    expect(layout).not.toMatch(/max-w-4xl/);
+    expect(layout).not.toMatch(/data-blog-shell="wide"/);
+    // Article-only wide breakout must be scoped in CSS (never a global wide shell)
+    const css = fs.existsSync(GLOBALS_PATH) ? read(GLOBALS_PATH) : "";
+    expect(css).toMatch(/data-article-shell/);
+    expect(css).toMatch(/min\(72rem, 100vw - 2rem\)/);
   });
 
   it("S1: desktop rail is a grid sibling OUTSIDE the prose measure", () => {
@@ -66,8 +75,20 @@ describe("article shell contract (S1/S2/S5/S7/S8/S9)", () => {
 
   it("S7: non-article pages keep the narrow centered shell", () => {
     const layout = read(LAYOUT_PATH);
-    // Narrow measure preserved somewhere (header/footer inner or CSS default)
+    // Narrow measure preserved at shell level (header/footer inner + root narrow)
     expect(layout).toMatch(/max-w-2xl/);
+    expect(layout).toMatch(/data-blog-shell="narrow"/);
+    // Hard fail on any wide leak at shell level: home/about/list would inherit it
+    expect(layout).not.toMatch(/max-w-6xl/);
+    expect(layout).not.toMatch(/max-w-5xl/);
+    expect(layout).not.toMatch(/max-w-4xl/);
+    expect(layout).not.toMatch(/data-blog-shell="wide"/);
+    // globals.css default-narrow guard: non-article main children capped at 42rem
+    const css = fs.existsSync(GLOBALS_PATH) ? read(GLOBALS_PATH) : "";
+    expect(css).toMatch(/data-blog-shell/);
+    expect(css).toMatch(/max-width:\s*42rem/);
+    // Wide breakout is article-scoped only (never matches non-article children)
+    expect(css).toMatch(/data-article-shell/);
     // Home / list / about sources must NOT opt into the wide shell
     for (const rel of [
       "src/app/page.tsx",
@@ -78,6 +99,7 @@ describe("article shell contract (S1/S2/S5/S7/S8/S9)", () => {
       expect(src).not.toMatch(/data-article-shell/);
       expect(src).not.toMatch(/max-w-6xl/);
       expect(src).not.toMatch(/data-toc-rail/);
+      expect(src).not.toMatch(/TocDrawer/);
     }
   });
 
