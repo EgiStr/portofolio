@@ -14,7 +14,7 @@ const navLinks = [
   { name: "Contact", href: "#contact" },
 ];
 
-export function Navbar() {
+export function Navbar({ resumeUrl }: { resumeUrl?: string }) {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
@@ -81,14 +81,16 @@ export function Navbar() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.4 }}
             >
-              <a
-                href="/resume.pdf"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="px-4 py-2 rounded border border-primary text-primary text-sm hover:bg-primary/10 transition-colors"
-              >
-                Resume
-              </a>
+              {resumeUrl && (
+                <a
+                  href={resumeUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="px-4 py-2 rounded border border-primary text-primary text-sm hover:bg-primary/10 transition-colors"
+                >
+                  Resume
+                </a>
+              )}
             </motion.li>
           </ul>
 
@@ -135,14 +137,16 @@ export function Navbar() {
                   {link.name}
                 </a>
               ))}
-              <a
-                href="/resume.pdf"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="px-6 py-3 rounded border border-primary text-primary text-center hover:bg-primary/10 transition-colors"
-              >
-                Resume
-              </a>
+              {resumeUrl && (
+                <a
+                  href={resumeUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="px-6 py-3 rounded border border-primary text-primary text-center hover:bg-primary/10 transition-colors"
+                >
+                  Resume
+                </a>
+              )}
             </nav>
           </motion.div>
         )}

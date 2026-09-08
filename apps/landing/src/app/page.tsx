@@ -5,6 +5,7 @@ import { Hero } from "@/components/sections/hero";
 import { About } from "@/components/sections/about";
 import { Spotlight, GridBackground } from "@/components/ui/spotlight";
 import { prisma } from "@ecosystem/database";
+import { getSettings } from "@ecosystem/config";
 
 // Lazy load below-fold components to reduce initial bundle
 const Experience = dynamic(
@@ -107,17 +108,18 @@ async function getCertifications() {
 }
 
 export default async function Home() {
-  const [experiences, projects, certifications] = await Promise.all([
+  const [experiences, projects, certifications, settings] = await Promise.all([
     getExperiences(),
     getProjects(),
     getCertifications(),
+    getSettings(),
   ]);
 
   return (
     <>
       <Spotlight />
       <GridBackground />
-      <Navbar />
+      <Navbar resumeUrl={settings.resumeUrl} />
       <main className="relative z-10">
         <Hero />
         <About />
