@@ -8,25 +8,42 @@ interface TocItem {
   level: number;
 }
 
-export function TableOfContents() {
+/**
+ * Shared heading-collection hook (single source per A3).
+ * Scopes queries + observer to the article prose container so
+ * outside-prose headings (e.g. RelatedPosts h2/h3) never leak into the TOC.
+ */
+export function useTocHeadings(): TocItem[] {
   const [headings, setHeadings] = useState<TocItem[]>([]);
+
+  useEffect(() => {
+    const container: ParentNode =
+      document.querySelector("[data-prose-container]") ?? document;
+    const elements = container.querySelectorAll("h2[id], h3[id]");
+    const items: TocItem[] = [];
+    elements.forEach((el) => {
+      items.push({
+        id: el.id,
+        text: el.textContent || "",
+        level: parseInt(el.tagName[1]),
+      });
+    });
+    setHeadings(items);
+  }, []);
+
+  return headings;
+}
+
+export function TableOfContents() {
+  const headings = useTocHeadings();
   const [activeId, setActiveId] = useState<string>("");
 
   useEffect(() => {
-    const elements = document.querySelectorAll("h2, h3");
-    const items: TocItem[] = [];
-    elements.forEach((el) => {
-      if (el.id) {
-        items.push({
-          id: el.id,
-          text: el.textContent || "",
-          level: parseInt(el.tagName[1]),
-        });
-      }
-    });
-    setHeadings(items);
+    if (headings.length < 3) return;
 
-    if (items.length < 3) return;
+    const container: ParentNode =
+      document.querySelector("[data-prose-container]") ?? document;
+    const elements = container.querySelectorAll("h2[id], h3[id]");
 
     const observer = new IntersectionObserver(
       (entries) => {
@@ -41,7 +58,7 @@ export function TableOfContents() {
 
     elements.forEach((el) => observer.observe(el));
     return () => observer.disconnect();
-  }, []);
+  }, [headings]);
 
   if (headings.length < 3) return null;
 

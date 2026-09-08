@@ -203,16 +203,18 @@ export default async function BlogPostPage({ params }: PageProps) {
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
         {/* Back Link */}
-        <Link
-          href="/blog"
-          className="inline-flex items-center gap-1 text-muted-foreground hover:text-foreground text-sm mb-8 group"
-        >
-          <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
-          Back to blog
-        </Link>
+        <div className="mx-auto w-full max-w-2xl">
+          <Link
+            href="/blog"
+            className="inline-flex items-center gap-1 text-muted-foreground hover:text-foreground text-sm mb-8 group"
+          >
+            <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
+            Back to blog
+          </Link>
+        </div>
 
         {/* Header */}
-        <header className="mb-8">
+        <header className="mx-auto mb-8 w-full max-w-2xl">
           <h1 className="text-3xl font-bold text-foreground mb-4">
             {post.title}
           </h1>
@@ -246,7 +248,7 @@ export default async function BlogPostPage({ params }: PageProps) {
 
         {/* Cover Image */}
         {post.coverImage && (
-          <div className="relative w-full aspect-video mb-8 rounded-xl overflow-hidden shadow-lg">
+          <div className="relative mx-auto aspect-video w-full max-w-2xl mb-8 rounded-xl overflow-hidden shadow-lg">
             <Image
               src={post.coverImage}
               alt={post.title}
@@ -259,35 +261,41 @@ export default async function BlogPostPage({ params }: PageProps) {
 
         {/* Two-column layout for long posts: content + TOC sidebar */}
         <div
+          data-article-grid
           className={
             isLongPost
-              ? "grid grid-cols-1 lg:grid-cols-[1fr_220px] gap-8 lg:gap-12"
-              : ""
+              ? "mx-auto grid w-full max-w-6xl grid-cols-1 justify-center gap-8 lg:grid-cols-[minmax(0,42rem)_220px] lg:gap-12"
+              : "mx-auto w-full max-w-2xl"
           }
         >
           {/* Content */}
-          <div className="min-w-0">
+          <div
+            data-prose-container
+            className="mx-auto min-w-0 w-full max-w-2xl"
+          >
             <MarkdownContent content={post.content} />
           </div>
 
           {/* Desktop TOC sidebar for long posts */}
           {isLongPost && (
-            <aside className="hidden lg:block">
+            <aside data-toc-rail className="hidden lg:block">
               <TableOfContents />
             </aside>
           )}
         </div>
 
         {/* Share Buttons */}
-        <div className="border-t border-border mt-12">
+        <div className="mx-auto w-full max-w-2xl border-t border-border mt-12">
           <ShareButtons title={post.title} url={postUrl} />
         </div>
 
         {/* Related Posts */}
-        <RelatedPosts currentSlug={post.slug} tags={post.tags || []} />
+        <div className="mx-auto w-full max-w-2xl">
+          <RelatedPosts currentSlug={post.slug} tags={post.tags || []} />
+        </div>
 
         {/* Footer */}
-        <footer className="pt-4">
+        <footer className="mx-auto w-full max-w-2xl pt-4">
           <p className="text-muted-foreground text-sm">
             Thanks for reading! If you found this helpful, feel free to share
             it.
