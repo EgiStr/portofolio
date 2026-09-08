@@ -97,9 +97,12 @@ export default async function RootLayout({
             </Script>
           </>
         )}
-        <div className="max-w-2xl mx-auto px-4 py-8">
+        <div
+          className="mx-auto w-full max-w-6xl px-4 py-8"
+          data-blog-shell="wide"
+        >
           {/* Navigation */}
-          <header className="flex items-center justify-between mb-16">
+          <header className="mx-auto flex w-full max-w-2xl items-center justify-between mb-16">
             <Link
               href="/"
               className="flex items-center gap-2 hover:opacity-80 transition-opacity"
@@ -127,10 +130,10 @@ export default async function RootLayout({
           </header>
 
           {/* Main Content */}
-          <main>{children}</main>
+          <main data-blog-main>{children}</main>
 
           {/* Footer */}
-          <footer className="mt-16 pt-8 border-t border-border">
+          <footer className="mx-auto mt-16 w-full max-w-2xl pt-8 border-t border-border">
             <div className="flex items-center justify-between text-sm text-muted-foreground">
               <p>
                 © {new Date().getFullYear()} {name}

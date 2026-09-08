@@ -197,7 +197,7 @@ export default async function BlogPostPage({ params }: PageProps) {
   return (
     <>
       <ReadingProgress />
-      <article>
+      <article data-article-shell="wide" className="mx-auto w-full max-w-6xl">
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}

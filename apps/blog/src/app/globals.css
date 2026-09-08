@@ -69,6 +69,22 @@ pre code {
   @apply bg-transparent p-0;
 }
 
+/* Blog shell contract (Direction A): the root shell is wide (max-w-6xl) so
+   the article row can break out; non-article pages stay narrow by default.
+   The article opts out via [data-article-shell]; fixed overlays (reading
+   progress) are excluded so they keep full-viewport width. (S1/S7) */
+[data-blog-shell] main > :not([data-article-shell]):not(.fixed) {
+  margin-inline: auto;
+  width: 100%;
+  max-width: 42rem;
+}
+
+/* Short-post fallback: when the TOC rail is empty (TOC returns null), the
+   article grid collapses to a single centered column (S5). */
+[data-article-grid]:has([data-toc-rail]:empty) {
+  grid-template-columns: 1fr;
+}
+
 /* Prose overrides for dark mode */
 .prose {
   @apply text-muted-foreground;
