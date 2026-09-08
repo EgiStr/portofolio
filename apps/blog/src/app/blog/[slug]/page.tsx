@@ -8,6 +8,7 @@ import { prisma } from "@ecosystem/database";
 import { MarkdownContent } from "@/components/markdown-content";
 import { ReadingProgress } from "@/components/reading-progress";
 import { TableOfContents } from "@/components/table-of-contents";
+import { TocDrawer } from "@/components/toc-drawer";
 import { RelatedPosts } from "@/components/related-posts";
 
 interface Post {
@@ -283,6 +284,9 @@ export default async function BlogPostPage({ params }: PageProps) {
             </aside>
           )}
         </div>
+
+        {/* Mobile TOC drawer for long posts (below lg, S3/S4/S6) */}
+        {isLongPost && <TocDrawer />}
 
         {/* Share Buttons */}
         <div className="mx-auto w-full max-w-2xl border-t border-border mt-12">

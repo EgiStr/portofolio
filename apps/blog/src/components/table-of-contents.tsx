@@ -17,8 +17,11 @@ export function useTocHeadings(): TocItem[] {
   const [headings, setHeadings] = useState<TocItem[]>([]);
 
   useEffect(() => {
-    const container: ParentNode =
-      document.querySelector("[data-prose-container]") ?? document;
+    const container = document.querySelector("[data-prose-container]");
+    if (!container) {
+      setHeadings([]);
+      return;
+    }
     const elements = container.querySelectorAll("h2[id], h3[id]");
     const items: TocItem[] = [];
     elements.forEach((el) => {
@@ -41,8 +44,8 @@ export function TableOfContents() {
   useEffect(() => {
     if (headings.length < 3) return;
 
-    const container: ParentNode =
-      document.querySelector("[data-prose-container]") ?? document;
+    const container = document.querySelector("[data-prose-container]");
+    if (!container) return;
     const elements = container.querySelectorAll("h2[id], h3[id]");
 
     const observer = new IntersectionObserver(
