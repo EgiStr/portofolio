@@ -12,7 +12,7 @@ export default withAuth(
     pages: {
       signIn:
         process.env.NODE_ENV === "production"
-          ? "https://manager.eggisatria.dev/login"
+          ? "https://manager.eggisatria.my.id/login"
           : "/login",
     },
   },

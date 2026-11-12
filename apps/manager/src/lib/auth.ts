@@ -78,7 +78,7 @@ export const authOptions: AuthOptions = {
         path: "/",
         secure: process.env.NODE_ENV === "production",
         domain:
-          process.env.NODE_ENV === "production" ? ".eggisatria.dev" : undefined,
+          process.env.NODE_ENV === "production" ? ".eggisatria.my.id" : undefined,
       },
     },
   },

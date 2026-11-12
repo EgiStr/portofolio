@@ -49,11 +49,11 @@ export const authOptions: AuthOptions = {
     // Redirect to manager for login in production
     signIn:
       process.env.NODE_ENV === "production"
-        ? "https://manager.eggisatria.dev/login"
+        ? "https://manager.eggisatria.my.id/login"
         : "/login",
     error:
       process.env.NODE_ENV === "production"
-        ? "https://manager.eggisatria.dev/login"
+        ? "https://manager.eggisatria.my.id/login"
         : "/login",
   },
   callbacks: {
@@ -85,7 +85,7 @@ export const authOptions: AuthOptions = {
         path: "/",
         secure: process.env.NODE_ENV === "production",
         domain:
-          process.env.NODE_ENV === "production" ? ".eggisatria.dev" : undefined,
+          process.env.NODE_ENV === "production" ? ".eggisatria.my.id" : undefined,
       },
     },
   },
