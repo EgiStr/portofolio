@@ -14,6 +14,42 @@ type DocConfig = {
   defaults: Record<string, unknown>;
 };
 
+export const postDoc: DocConfig = {
+  resource: "posts",
+  listHref: "/dashboard/posts",
+  titleKey: "title",
+  titlePlaceholder: "Post title",
+  properties: [
+    { key: "slug", label: "Slug", type: "text", mono: true, required: true },
+    { key: "published", label: "Published", type: "checkbox" },
+    { key: "tags", label: "Tags", type: "tags" },
+  ],
+  sections: [
+    {
+      kind: "text",
+      key: "excerpt",
+      label: "Excerpt",
+      placeholder: "One or two sentences for the post list and link previews.",
+    },
+    { kind: "markdown", key: "content", label: "Content", bucket: "blog" },
+    {
+      kind: "image",
+      key: "coverImage",
+      label: "Cover image",
+      bucket: "blog",
+      aspect: "video",
+    },
+  ],
+  required: ["title", "slug", "content"],
+  defaults: {
+    title: "",
+    slug: "",
+    content: "",
+    published: false,
+    tags: [],
+  },
+};
+
 export const projectDoc: DocConfig = {
   resource: "projects",
   listHref: "/dashboard/projects",

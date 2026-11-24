@@ -1,0 +1,48 @@
+/* Crepe reads its palette from these variables. Pointing them at the manager
+   tokens makes the editor follow the light and dark themes with no second sheet. */
+.post-body .milkdown {
+  --crepe-color-background: hsl(var(--background));
+  --crepe-color-on-background: hsl(var(--foreground));
+  --crepe-color-surface: hsl(var(--card));
+  --crepe-color-surface-low: hsl(var(--muted));
+  --crepe-color-on-surface: hsl(var(--foreground));
+  --crepe-color-on-surface-variant: hsl(var(--muted-foreground));
+  --crepe-color-outline: hsl(var(--border));
+  --crepe-color-primary: hsl(var(--primary));
+  --crepe-color-secondary: hsl(var(--primary-soft));
+  --crepe-color-on-secondary: hsl(var(--foreground));
+  --crepe-color-inverse: hsl(var(--muted));
+  --crepe-color-on-inverse: hsl(var(--foreground));
+  --crepe-color-inline-code: hsl(var(--primary));
+  --crepe-color-error: hsl(var(--destructive));
+  --crepe-color-hover: hsl(var(--accent));
+  --crepe-color-selected: hsl(var(--primary-soft));
+  --crepe-color-inline-area: hsl(var(--muted));
+
+  --crepe-base-font-size: 16px;
+  --crepe-font-title: inherit;
+  --crepe-font-default: inherit;
+  --crepe-font-code: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  --crepe-shadow-1: 0 1px 2px hsl(var(--foreground) / 0.08);
+  --crepe-shadow-2: 0 4px 12px hsl(var(--foreground) / 0.12);
+
+  background: transparent;
+}
+
+/* The document column already has its own margins. */
+.post-body .milkdown .ProseMirror {
+  padding: 0 0 0 0;
+}
+
+/* Headings inside the post sit below the document title in size. */
+.post-body .milkdown .ProseMirror h1,
+.post-body .milkdown .ProseMirror h2,
+.post-body .milkdown .ProseMirror h3,
+.post-body .milkdown .ProseMirror h4 {
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+.post-body .milkdown .ProseMirror h1 { font-size: 28px; line-height: 36px; }
+.post-body .milkdown .ProseMirror h2 { font-size: 23px; line-height: 30px; }
+.post-body .milkdown .ProseMirror h3 { font-size: 19px; line-height: 26px; }
+.post-body .milkdown .ProseMirror h4 { font-size: 16px; line-height: 24px; }

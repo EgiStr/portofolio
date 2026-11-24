@@ -85,7 +85,7 @@ export async function createSkillAction(name: string) {
   });
 }
 
-export type DocResource = Exclude<Resource, "posts">;
+export type DocResource = Resource;
 
 /** Create a record from a document page once its required fields are filled. */
 export async function createRecordAction(
@@ -94,6 +94,7 @@ export async function createRecordAction(
 ) {
   return run(async () => {
     const create = {
+      posts: posts.create,
       projects: projects.create,
       experiences: experiences.create,
       skills: skills.create,

@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState, useTransition } from "react";
+import dynamic from "next/dynamic";
 import { usePathname, useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { Plus, X } from "lucide-react";
@@ -20,6 +21,14 @@ import { ImageUpload } from "@/components/upload/image-upload";
 import { FileUpload } from "@/components/upload/file-upload";
 import { isConflict, makeSaver } from "@/lib/record-saver";
 
+// The block editor touches the DOM on load, so it never renders on the server.
+const PostBody = dynamic(() => import("./post-body"), {
+  ssr: false,
+  loading: () => (
+    <p className="text-sm text-muted-foreground">Loading editor</p>
+  ),
+});
+
 export type Section =
   | { kind: "text"; key: string; label: string; placeholder?: string }
   | {
@@ -30,6 +39,7 @@ export type Section =
       aspect: "video" | "square" | "banner";
     }
   | { kind: "file"; key: string; label: string; bucket: "certificates" }
+  | { kind: "markdown"; key: string; label: string; bucket: "blog" }
   | {
       kind: "skills";
       label: string;
@@ -93,6 +103,9 @@ export function RecordDocument({
   const saver = useMemo(() => makeSaver(resource), [resource]);
   /** What the server last accepted, so a blur with no change sends nothing. */
   const saved = useRef(initial);
+  /** Bumped with each reset so the post editor remounts on the fresh text. */
+  const [generation, setGeneration] = useState(0);
+  const mounted = useRef(false);
 
   // Fresh props arrive after router.refresh() (the Reload on a conflict).
   useEffect(() => {
@@ -100,6 +113,8 @@ export function RecordDocument({
     saved.current = initial;
     if (id) saver.reset(id, updatedAt);
     setStatus({ kind: "idle" });
+    if (mounted.current) setGeneration((g) => g + 1);
+    mounted.current = true;
   }, [initial, id, updatedAt, saver]);
 
   const title = String(values[titleKey] ?? "");
@@ -307,6 +322,16 @@ export function RecordDocument({
                   label={s.label}
                   live={creating}
                   onCommit={(v) => commit(s.key, v.trim() ? v : null)}
+                />
+              )}
+              {s.kind === "markdown" && (
+                <PostBody
+                  key={generation}
+                  value={String(values[s.key] ?? "")}
+                  bucket={s.bucket}
+                  live={creating}
+                  locked={reloading || busy}
+                  onCommit={(md) => commit(s.key, md)}
                 />
               )}
               {s.kind === "image" && (
