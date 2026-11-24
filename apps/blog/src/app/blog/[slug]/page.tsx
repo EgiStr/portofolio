@@ -95,7 +95,7 @@ export async function generateMetadata({
   }
 
   const baseUrl =
-    process.env.NEXT_PUBLIC_SITE_URL || "https://blog.eggisatria.dev";
+    process.env.NEXT_PUBLIC_SITE_URL || "https://blog.eggisatria.my.id";
   const url = `${baseUrl}/blog/${post.slug}`;
   const ogImage =
     post.coverImage ||
@@ -151,7 +151,7 @@ export default async function BlogPostPage({ params }: PageProps) {
   }
 
   const baseUrl =
-    process.env.NEXT_PUBLIC_SITE_URL || "https://blog.eggisatria.dev";
+    process.env.NEXT_PUBLIC_SITE_URL || "https://blog.eggisatria.my.id";
   const postUrl = `${baseUrl}/blog/${slug}`;
 
   // JSON-LD: BlogPosting + BreadcrumbList

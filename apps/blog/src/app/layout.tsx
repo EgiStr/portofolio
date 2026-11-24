@@ -21,7 +21,7 @@ export async function generateMetadata(): Promise<Metadata> {
   const ogImage = settings.ogImage || "/opengraph-image.png";
 
   return {
-    metadataBase: new URL("https://blog.eggisatria.dev"),
+    metadataBase: new URL("https://blog.eggisatria.my.id"),
     title: {
       default: title,
       template: `%s | ${title}`,
@@ -37,7 +37,7 @@ export async function generateMetadata(): Promise<Metadata> {
     openGraph: {
       type: "website",
       locale: "en_US",
-      url: "https://blog.eggisatria.dev",
+      url: "https://blog.eggisatria.my.id",
       title,
       description,
       siteName: title,
@@ -74,7 +74,7 @@ export default async function RootLayout({
   const name = settings.name;
   // websiteUrl is not in the centralized Settings schema; keep as a hardcoded
   // fallback so the layout still renders if the SiteConfig is empty.
-  const websiteUrl = "https://eggisatria.dev";
+  const websiteUrl = "https://www.eggisatria.my.id";
   const gaId = settings.googleAnalyticsId;
 
   return (

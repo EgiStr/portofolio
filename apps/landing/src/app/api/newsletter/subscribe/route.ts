@@ -129,7 +129,7 @@ async function sendWelcomeEmail(email: string, name: string | null) {
     const settings = await getSettings();
     const fromName = settings.name || "Eggi Satria";
     const siteUrl =
-      process.env.NEXT_PUBLIC_SITE_URL || "https://eggisatria.dev";
+      process.env.NEXT_PUBLIC_SITE_URL || "https://www.eggisatria.my.id";
     const unsubscribeUrl = `${siteUrl}/api/newsletter/unsubscribe?email=${encodeURIComponent(
       email,
     )}&token=${signUnsubscribeToken(email)}`;

@@ -31,14 +31,14 @@ export async function generateMetadata(): Promise<Metadata> {
       ];
 
   return {
-    metadataBase: new URL("https://eggisatria.dev"),
+    metadataBase: new URL("https://www.eggisatria.my.id"),
     title: {
       default: siteTitle,
       template: `%s | ${settings.name}`,
     },
     description,
     keywords,
-    authors: [{ name: settings.name, url: "https://eggisatria.dev" }],
+    authors: [{ name: settings.name, url: "https://www.eggisatria.my.id" }],
     creator: settings.name,
     publisher: settings.name,
     robots: {
@@ -55,13 +55,13 @@ export async function generateMetadata(): Promise<Metadata> {
     openGraph: {
       type: "website",
       locale: "en_US",
-      url: "https://eggisatria.dev",
+      url: "https://www.eggisatria.my.id",
       title: siteTitle,
       description,
       siteName: settings.name,
       images: [
         {
-          url: "https://eggisatria.dev/opengraph-image.png",
+          url: "https://www.eggisatria.my.id/opengraph-image.png",
           width: 1200,
           height: 630,
           alt: `${settings.name} - ${settings.jobTitle}`,
@@ -75,7 +75,7 @@ export async function generateMetadata(): Promise<Metadata> {
       creator: settings.twitter
         ? `@${settings.twitter.replace(/^@/, "")}`
         : "@egistr",
-      images: ["https://eggisatria.dev/twitter-image.png"],
+      images: ["https://www.eggisatria.my.id/twitter-image.png"],
     },
     icons: {
       icon: "/icon.png",
@@ -117,7 +117,7 @@ export default async function RootLayout({
     "@context": "https://schema.org",
     "@type": "Person",
     name: settings.name,
-    url: "https://eggisatria.dev",
+    url: "https://www.eggisatria.my.id",
     sameAs,
     jobTitle: settings.jobTitle,
     worksFor: {
@@ -125,7 +125,7 @@ export default async function RootLayout({
       name: "Freelance",
     },
     description,
-    image: "https://eggisatria.dev/opengraph-image.png",
+    image: "https://www.eggisatria.my.id/opengraph-image.png",
   };
 
   return (

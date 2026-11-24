@@ -4,7 +4,7 @@ import { getSettings } from "@ecosystem/config";
 export const dynamic = "force-dynamic";
 
 const SITE_URL =
-  process.env.NEXT_PUBLIC_SITE_URL || "https://blog.eggisatria.dev";
+  process.env.NEXT_PUBLIC_SITE_URL || "https://blog.eggisatria.my.id";
 
 /**
  * GET /rss.xml — RSS 2.0 feed of the most recent 20 published blog posts.

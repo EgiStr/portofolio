@@ -41,7 +41,8 @@ export async function generateMetadata({
     };
   }
 
-  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://eggisatria.dev";
+  const baseUrl =
+    process.env.NEXT_PUBLIC_SITE_URL || "https://www.eggisatria.my.id";
   const url = `${baseUrl}/portfolio/${project.slug}`;
   const ogImage = project.imageUrl || `${baseUrl}/opengraph-image.png`;
   const description = project.description.slice(0, 160);
@@ -118,14 +119,14 @@ export default async function ProjectDetailPage({ params }: PageProps) {
     "@type": "CreativeWork",
     name: project.title,
     description: project.description,
-    url: `https://eggisatria.dev/portfolio/${project.slug}`,
+    url: `https://www.eggisatria.my.id/portfolio/${project.slug}`,
     image: project.imageUrl || undefined,
     dateCreated: project.createdAt.toISOString(),
     dateModified: project.updatedAt.toISOString(),
     author: {
       "@type": "Person",
       name: project.author?.name || "Eggi Satria",
-      url: "https://eggisatria.dev",
+      url: "https://www.eggisatria.my.id",
     },
     keywords: project.techStack.map((t) => t.name).join(", "),
     ...(project.githubUrl && { codeRepository: project.githubUrl }),

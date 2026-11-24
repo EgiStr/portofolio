@@ -51,7 +51,7 @@ export default async function PortfolioPage() {
     name: "Portfolio - Eggi Satria",
     description:
       "A collection of projects showcasing full-stack development expertise.",
-    url: "https://eggisatria.dev/portfolio",
+    url: "https://www.eggisatria.my.id/portfolio",
     mainEntity: {
       "@type": "ItemList",
       numberOfItems: projects.length,
@@ -62,7 +62,7 @@ export default async function PortfolioPage() {
           "@type": "CreativeWork",
           name: project.title,
           description: project.description,
-          url: `https://eggisatria.dev/portfolio/${project.slug}`,
+          url: `https://www.eggisatria.my.id/portfolio/${project.slug}`,
           image: project.imageUrl || undefined,
         },
       })),

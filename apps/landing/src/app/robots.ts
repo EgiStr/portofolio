@@ -7,6 +7,6 @@ export default function robots(): MetadataRoute.Robots {
       allow: "/",
       disallow: "/private/",
     },
-    sitemap: "https://eggisatria.dev/sitemap.xml",
+    sitemap: "https://www.eggisatria.my.id/sitemap.xml",
   };
 }

@@ -2,7 +2,7 @@ import { MetadataRoute } from "next";
 import { prisma } from "@ecosystem/database";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const baseUrl = "https://eggisatria.dev";
+  const baseUrl = "https://www.eggisatria.my.id";
 
   // Fetch all published projects for sitemap
   const projects = await prisma.project.findMany({

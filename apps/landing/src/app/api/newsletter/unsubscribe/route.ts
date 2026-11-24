@@ -5,7 +5,8 @@ import { getSettings } from "@ecosystem/config";
 
 export const dynamic = "force-dynamic";
 
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://eggisatria.dev";
+const SITE_URL =
+  process.env.NEXT_PUBLIC_SITE_URL || "https://www.eggisatria.my.id";
 
 /**
  * GET /api/newsletter/unsubscribe?email=&token=

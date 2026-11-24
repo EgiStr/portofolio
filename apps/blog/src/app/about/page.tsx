@@ -60,14 +60,14 @@ export default async function AboutPage() {
       </p>
       <ul>
         <li>
-          <a href="https://eggisatria.dev">eggisatria.dev</a> — Landing page &
-          portfolio
+          <a href="https://www.eggisatria.my.id">eggisatria.my.id</a> — Landing
+          page & portfolio
         </li>
         <li>
-          <a href="https://blog.eggisatria.dev">blog.eggisatria.dev</a> — This
-          blog (you are here!)
+          <a href="https://blog.eggisatria.my.id">blog.eggisatria.my.id</a> —
+          This blog (you are here!)
         </li>
-        <li>manager.eggisatria.dev — Content management system</li>
+        <li>manager.eggisatria.my.id — Content management system</li>
       </ul>
 
       <h2>Get in Touch</h2>
