@@ -142,7 +142,7 @@ export function FileUpload({
 
   return (
     <div className="space-y-2">
-      <Label>{label}</Label>
+      {label && <Label>{label}</Label>}
 
       {value ? (
         // Preview Mode

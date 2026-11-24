@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { ChevronRight, ChevronsRight, Menu, Search } from "lucide-react";
@@ -16,7 +17,20 @@ export function TopBar({
   onMenu: () => void;
   onSearch: () => void;
 }) {
-  const trail = crumbs(usePathname());
+  const pathname = usePathname();
+  // Record pages announce their title so the last crumb reads "Guava" not "Edit".
+  const [named, setNamed] = useState<{ path: string; title: string } | null>(
+    null,
+  );
+  useEffect(() => {
+    const on = (e: Event) =>
+      setNamed((e as CustomEvent<{ path: string; title: string }>).detail);
+    window.addEventListener("manager-crumb", on);
+    return () => window.removeEventListener("manager-crumb", on);
+  }, []);
+  const trail = crumbs(pathname);
+  if (named?.path === pathname && trail.length > 1)
+    trail[trail.length - 1] = { label: named.title };
   return (
     <header className="sticky top-0 z-30 flex h-12 items-center gap-1 border-b bg-background/95 px-3 backdrop-blur-sm supports-[backdrop-filter]:bg-background/80 sm:px-4">
       <button

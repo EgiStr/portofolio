@@ -98,11 +98,11 @@ export default function DashboardPage() {
   return (
     <div>
       <div className="mb-6 sm:mb-8">
-        <h1 className="text-2xl sm:text-3xl font-bold text-foreground">
-          Dashboard
+        <h1 className="text-[28px] font-semibold leading-tight tracking-tight">
+          Home
         </h1>
-        <p className="text-muted-foreground mt-1 text-sm sm:text-base">
-          Welcome back! Here&apos;s an overview of your content.
+        <p className="mt-1 text-muted-foreground">
+          Counts across the site. Ctrl K finds any record.
         </p>
       </div>
 

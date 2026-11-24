@@ -298,6 +298,11 @@ export const experiences = {
     prisma.experience.findMany({
       orderBy: [{ order: "asc" }, { startDate: "desc" }],
     }),
+  get: async (id: string) => {
+    const row = await prisma.experience.findUnique({ where: { id } });
+    if (!row) throw new ContentError(`Experience "${id}" not found.`);
+    return row;
+  },
   create: (i: ExperienceInput) =>
     wrap(() =>
       prisma.experience.create({
@@ -361,6 +366,11 @@ export const skills = {
     prisma.skill.findMany({
       orderBy: [{ category: "asc" }, { order: "asc" }, { name: "asc" }],
     }),
+  get: async (id: string) => {
+    const row = await prisma.skill.findUnique({ where: { id } });
+    if (!row) throw new ContentError(`Skill "${id}" not found.`);
+    return row;
+  },
   create: (i: SkillInput) => wrap(() => prisma.skill.create({ data: i })),
   update: (id: string, p: Patch<SkillInput>) =>
     wrap(() =>
@@ -415,6 +425,14 @@ export const certifications = {
       include: certInclude,
       orderBy: [{ displayOrder: "asc" }, { issueDate: "desc" }],
     }),
+  get: async (id: string) => {
+    const row = await prisma.certification.findUnique({
+      where: { id },
+      include: certInclude,
+    });
+    if (!row) throw new ContentError(`Certification "${id}" not found.`);
+    return row;
+  },
   create: ({ skillIds, ...i }: CertificationInput) =>
     wrap(() =>
       prisma.certification.create({

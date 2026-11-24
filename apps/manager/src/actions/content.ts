@@ -84,3 +84,29 @@ export async function createSkillAction(name: string) {
     };
   });
 }
+
+export type DocResource = Exclude<Resource, "posts">;
+
+/** Create a record from a document page once its required fields are filled. */
+export async function createRecordAction(
+  resource: DocResource,
+  values: Record<string, unknown>,
+) {
+  return run(async () => {
+    const create = {
+      projects: projects.create,
+      experiences: experiences.create,
+      skills: skills.create,
+      certifications: certifications.create,
+    }[resource] as unknown as (
+      v: Record<string, unknown>,
+    ) => Promise<{ id: string }>;
+    // Empty optional fields are left out so the database defaults apply.
+    const row = await create(
+      Object.fromEntries(
+        Object.entries(values).filter(([, v]) => v !== null && v !== ""),
+      ),
+    );
+    return { id: row.id };
+  });
+}
