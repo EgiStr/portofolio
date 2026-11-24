@@ -22,7 +22,10 @@ export default function DashboardLayout({
   const [palette, setPalette] = useState(false);
 
   useEffect(() => {
-    if (status === "unauthenticated") router.push("/login");
+    if (status === "unauthenticated")
+      router.push(
+        `/login?callbackUrl=${encodeURIComponent(window.location.pathname)}`,
+      );
   }, [status, router]);
 
   useEffect(() => {

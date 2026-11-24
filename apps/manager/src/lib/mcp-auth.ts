@@ -1,5 +1,6 @@
 import { createHash } from "node:crypto";
 import { prisma } from "@ecosystem/database";
+import { MCP_KEY_NAME } from "@/lib/mcp-key";
 
 /**
  * Bearer keys are the manager's API keys (eds_api_keys, SHA-256 hash stored).
@@ -24,7 +25,7 @@ export async function authenticateMcp(req: Request) {
   const key = await prisma.apiKey.findFirst({
     where: { keyHash, isActive: true },
   });
-  if (!key || !/^(zia|manager)\b/i.test(key.name)) return null;
+  if (!key || !MCP_KEY_NAME.test(key.name)) return null;
   prisma.apiKey
     .update({ where: { id: key.id }, data: { lastUsedAt: new Date() } })
     .catch(() => {});
