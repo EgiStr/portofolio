@@ -1,205 +1,69 @@
-"use client";
+import { redirect } from "next/navigation";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth";
+import { projects } from "@/lib/content";
+import { DataTable, type Column } from "@/components/database/data-table";
 
-import { useState, useEffect } from "react";
-import Link from "next/link";
-import { Button, Card, CardContent, Badge } from "@ecosystem/ui";
-import {
-  Plus,
-  Edit,
-  Trash2,
-  ExternalLink,
-  Github,
-  Loader2,
-} from "lucide-react";
-import { toast } from "sonner";
+export const dynamic = "force-dynamic";
 
-interface Project {
-  id: string;
-  title: string;
-  slug: string;
-  description: string;
-  status: string;
-  featured: boolean;
-  techStack: { id: string; name: string }[];
-  liveUrl?: string;
-  githubUrl?: string;
-  createdAt: string;
-}
+const columns: Column[] = [
+  {
+    key: "title",
+    label: "Title",
+    type: "text",
+    primary: true,
+    required: true,
+    width: "w-[28%]",
+  },
+  {
+    key: "status",
+    label: "Status",
+    type: "select",
+    required: true,
+    width: "w-32",
+    options: [
+      { value: "PUBLISHED", label: "Published", tone: "accent" },
+      { value: "DRAFT", label: "Draft" },
+      { value: "ARCHIVED", label: "Archived" },
+    ],
+  },
+  { key: "featured", label: "Featured", type: "checkbox", width: "w-24" },
+  { key: "techStack", label: "Tech stack", type: "tags" },
+  {
+    key: "displayOrder",
+    label: "Order",
+    type: "number",
+    min: 0,
+    width: "w-20",
+  },
+  { key: "clicks", label: "Clicks", type: "readonly", width: "w-20" },
+];
 
-export default function ProjectsPage() {
-  const [projects, setProjects] = useState<Project[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-
-  useEffect(() => {
-    fetchProjects();
-  }, []);
-
-  async function fetchProjects() {
-    try {
-      const response = await fetch("/api/admin/projects");
-      if (response.ok) {
-        const data = await response.json();
-        setProjects(data.data || []);
-      }
-    } catch (error) {
-      console.error("Failed to fetch projects:", error);
-      toast.error("Failed to load projects");
-    } finally {
-      setIsLoading(false);
-    }
-  }
-
-  async function handleDelete(id: string, title: string) {
-    if (!confirm(`Are you sure you want to delete "${title}"?`)) {
-      return;
-    }
-
-    try {
-      const response = await fetch(`/api/admin/projects/${id}`, {
-        method: "DELETE",
-      });
-
-      if (response.ok) {
-        setProjects((prev) => prev.filter((p) => p.id !== id));
-        toast.success("Project deleted successfully");
-      } else {
-        throw new Error("Failed to delete");
-      }
-    } catch (error) {
-      console.error("Failed to delete project:", error);
-      toast.error("Failed to delete project");
-    }
-  }
-
-  if (isLoading) {
-    return (
-      <div className="flex items-center justify-center py-20">
-        <Loader2 className="w-8 h-8 animate-spin text-primary" />
-      </div>
-    );
-  }
-
+export default async function ProjectsPage() {
+  if (!(await getServerSession(authOptions))) redirect("/login");
+  const rows = (await projects.list()).map((p) => ({
+    id: p.id,
+    updatedAt: p.updatedAt.toISOString(),
+    href: `/dashboard/projects/${p.id}/edit`,
+    values: {
+      title: p.title,
+      status: p.status,
+      featured: p.featured,
+      techStack: p.techStack.map((t) => t.name),
+      displayOrder: p.displayOrder,
+      clicks: p.clicks,
+    },
+  }));
   return (
-    <div>
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6 sm:mb-8">
-        <div>
-          <h1 className="text-2xl sm:text-3xl font-bold text-foreground">
-            Projects
-          </h1>
-          <p className="text-muted-foreground mt-1 text-sm sm:text-base">
-            Manage your portfolio projects
-          </p>
-        </div>
-        <Link href="/dashboard/projects/new">
-          <Button className="w-full sm:w-auto min-h-[44px]">
-            <Plus className="w-4 h-4 mr-2" />
-            New Project
-          </Button>
-        </Link>
-      </div>
-
-      {projects.length === 0 ? (
-        <Card>
-          <CardContent className="p-12 text-center">
-            <p className="text-muted-foreground mb-4">No projects yet</p>
-            <Link href="/dashboard/projects/new">
-              <Button>
-                <Plus className="w-4 h-4 mr-2" />
-                Create your first project
-              </Button>
-            </Link>
-          </CardContent>
-        </Card>
-      ) : (
-        <div className="space-y-4">
-          {projects.map((project) => (
-            <Card key={project.id}>
-              <CardContent className="p-4 sm:p-6">
-                <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
-                  <div className="flex-1">
-                    <div className="flex items-center gap-3 mb-2 flex-wrap">
-                      <h3 className="text-base sm:text-lg font-semibold text-foreground">
-                        {project.title}
-                      </h3>
-                      <Badge
-                        variant={
-                          project.status === "PUBLISHED"
-                            ? "default"
-                            : "secondary"
-                        }
-                      >
-                        {project.status}
-                      </Badge>
-                      {project.featured && (
-                        <Badge variant="outline">Featured</Badge>
-                      )}
-                    </div>
-                    <p className="text-muted-foreground text-sm mb-3">
-                      {project.description}
-                    </p>
-                    <div className="flex flex-wrap gap-2 mb-3">
-                      {project.techStack?.map((tech) => (
-                        <span
-                          key={tech.id}
-                          className="text-xs px-2 py-1 bg-secondary text-muted-foreground rounded"
-                        >
-                          {tech.name}
-                        </span>
-                      ))}
-                    </div>
-                    <div className="flex items-center gap-4">
-                      {project.liveUrl && (
-                        <a
-                          href={project.liveUrl}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="text-xs text-muted-foreground hover:text-primary flex items-center gap-1"
-                        >
-                          <ExternalLink className="w-3 h-3" />
-                          Live
-                        </a>
-                      )}
-                      {project.githubUrl && (
-                        <a
-                          href={project.githubUrl}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="text-xs text-muted-foreground hover:text-primary flex items-center gap-1"
-                        >
-                          <Github className="w-3 h-3" />
-                          GitHub
-                        </a>
-                      )}
-                    </div>
-                  </div>
-                  <div className="flex sm:flex-col gap-2">
-                    <Link
-                      href={`/dashboard/projects/${project.id}/edit`}
-                      className="flex-1 sm:flex-none"
-                    >
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        className="w-full sm:w-auto min-w-[44px] min-h-[44px]"
-                      >
-                        <Edit className="w-4 h-4" />
-                      </Button>
-                    </Link>
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      className="text-destructive hover:text-destructive flex-1 sm:flex-none min-w-[44px] min-h-[44px]"
-                      onClick={() => handleDelete(project.id, project.title)}
-                    >
-                      <Trash2 className="w-4 h-4" />
-                    </Button>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
-      )}
-    </div>
+    <DataTable
+      resource="projects"
+      title="Projects"
+      description="Portfolio projects shown on the landing page. The landing page picks up changes within a minute."
+      columns={columns}
+      rows={rows}
+      newHref="/dashboard/projects/new"
+      newLabel="New project"
+      groupable={["status", "featured"]}
+    />
   );
 }
