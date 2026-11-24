@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { Crepe } from "@milkdown/crepe";
 import { insert } from "@milkdown/kit/utils";
+import { remarkStringifyOptionsCtx } from "@milkdown/kit/core";
 import { oneDark } from "@codemirror/theme-one-dark";
 import { Prec } from "@codemirror/state";
 import {
@@ -15,7 +16,11 @@ import "@milkdown/crepe/theme/frame.css";
 import "./post-body.css";
 import { cn } from "@ecosystem/ui";
 import { useMarkdownImageUpload } from "@/hooks/use-markdown-upload";
-import { MarkdownPreview } from "@/components/markdown/markdown-preview";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
+import remarkMath from "remark-math";
+import rehypeKatex from "rehype-katex";
+import "katex/dist/katex.min.css";
 import { firstDifference, sameDocument } from "@/lib/markdown-roundtrip";
 
 type Props = {
@@ -152,12 +157,25 @@ export default function PostBody({
             ? oneDark
             : Prec.default(syntaxHighlighting(defaultHighlightStyle)),
         },
+        // Sits close to the text so the stacked handle fits the margin.
+        [Crepe.Feature.BlockEdit]: {
+          blockHandle: { getOffset: () => 6 },
+        },
         [Crepe.Feature.Placeholder]: {
           text: "Write, or type / for blocks",
           mode: "doc",
         },
       },
     });
+    // Write `-` bullets and `---` rules like the posts already do, so the first
+    // edit does not rewrite every list and divider in the post.
+    crepe.editor.config((ctx) =>
+      ctx.update(remarkStringifyOptionsCtx, (prev) => ({
+        ...prev,
+        bullet: "-" as const,
+        rule: "-" as const,
+      })),
+    );
     crepe.on((l) =>
       l.markdownUpdated((_ctx, markdown) => {
         if (baseline === null) return;
@@ -358,7 +376,7 @@ function RawEditor({
         )}
       </div>
       {preview ? (
-        <MarkdownPreview content={value} />
+        <PostPreview markdown={value} />
       ) : (
         <textarea
           value={value}
@@ -377,6 +395,29 @@ function RawEditor({
           className="min-h-96 w-full resize-none rounded-md border bg-transparent p-3 font-mono text-[13px] leading-relaxed outline-none [field-sizing:content] focus:border-ring"
         />
       )}
+    </div>
+  );
+}
+
+/**
+ * Raw-mode preview with the blog's parser plugins (GFM and math), in the
+ * manager's colors instead of the resume preview's white page.
+ */
+function PostPreview({ markdown }: { markdown: string }) {
+  if (!markdown.trim())
+    return (
+      <p className="min-h-96 rounded-md border p-3 text-sm text-muted-foreground">
+        Nothing to preview yet.
+      </p>
+    );
+  return (
+    <div className="prose prose-neutral min-h-96 max-w-none rounded-md border p-4 dark:prose-invert prose-img:rounded-md">
+      <ReactMarkdown
+        remarkPlugins={[remarkGfm, remarkMath]}
+        rehypePlugins={[rehypeKatex]}
+      >
+        {markdown}
+      </ReactMarkdown>
     </div>
   );
 }

@@ -7,7 +7,9 @@
   --crepe-color-surface-low: hsl(var(--muted));
   --crepe-color-on-surface: hsl(var(--foreground));
   --crepe-color-on-surface-variant: hsl(var(--muted-foreground));
-  --crepe-color-outline: hsl(var(--border));
+  /* Crepe draws icons (block handle, slash menu, toolbar) in this color, so it
+     needs icon contrast, not border lightness. */
+  --crepe-color-outline: hsl(var(--muted-foreground));
   --crepe-color-primary: hsl(var(--primary));
   --crepe-color-secondary: hsl(var(--primary-soft));
   --crepe-color-on-secondary: hsl(var(--foreground));
@@ -46,3 +48,21 @@
 .post-body .milkdown .ProseMirror h2 { font-size: 23px; line-height: 30px; }
 .post-body .milkdown .ProseMirror h3 { font-size: 19px; line-height: 26px; }
 .post-body .milkdown .ProseMirror h4 { font-size: 16px; line-height: 24px; }
+
+/* The document column leaves about 40px left of the text at laptop widths,
+   and Crepe's handle (two 32px icons side by side) needs 82px, so the add
+   icon ended up clipped under the sidebar. Stacking the two icons keeps the
+   handle inside that margin. */
+.post-body .milkdown .milkdown-block-handle {
+  flex-direction: column;
+  gap: 0;
+}
+.post-body .milkdown .milkdown-block-handle .operation-item {
+  width: 26px;
+  height: 26px;
+  padding: 3px;
+}
+.post-body .milkdown .milkdown-block-handle .operation-item svg {
+  width: 20px;
+  height: 20px;
+}
