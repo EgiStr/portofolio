@@ -392,7 +392,7 @@ export default function EditCertificationPage({
                         type="checkbox"
                         checked={selectedSkills.includes(skill.id)}
                         onChange={() => toggleSkill(skill.id)}
-                        className="h-4 w-4 rounded border-gray-300"
+                        className="h-4 w-4 rounded border-input accent-primary"
                       />
                       <span className="text-sm">{skill.name}</span>
                     </label>

@@ -3,27 +3,56 @@
 @tailwind utilities;
 
 @layer base {
+  /* Tokens from DESIGN.md. Light is the default; .dark is set by the theme script. */
   :root {
-    --background: 222.2 84% 4.9%;
-    --foreground: 210 40% 98%;
-    --card: 217.2 32.6% 10%;
-    --card-foreground: 210 40% 98%;
-    --popover: 222.2 84% 4.9%;
-    --popover-foreground: 210 40% 98%;
-    --primary: 160 84% 39%;
-    --primary-foreground: 0 0% 0%;
-    --secondary: 217.2 32.6% 17.5%;
-    --secondary-foreground: 210 40% 98%;
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
-    --accent: 217.2 32.6% 17.5%;
-    --accent-foreground: 210 40% 98%;
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 40% 98%;
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 160 84% 39%;
-    --radius: 0.5rem;
+    --background: 60 17% 98%;
+    --foreground: 150 2% 19%;
+    --card: 0 0% 100%;
+    --card-foreground: 150 2% 19%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 150 2% 19%;
+    --primary: 161 84% 27%;
+    --primary-foreground: 0 0% 100%;
+    --primary-soft: 152 38% 92%;
+    --secondary: 60 8% 93%;
+    --secondary-foreground: 150 2% 19%;
+    --muted: 60 8% 93%;
+    --muted-foreground: 120 1% 40%;
+    --accent: 60 8% 93%;
+    --accent-foreground: 150 2% 19%;
+    --destructive: 6 54% 50%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 60 6% 89%;
+    --input: 60 6% 86%;
+    --ring: 161 84% 27%;
+    --sidebar: 60 9% 95.5%;
+    --radius: 0.375rem;
+    color-scheme: light;
+  }
+
+  .dark {
+    --background: 120 2% 10%;
+    --foreground: 90 4% 91%;
+    --card: 150 3% 13%;
+    --card-foreground: 90 4% 91%;
+    --popover: 150 3% 13%;
+    --popover-foreground: 90 4% 91%;
+    --primary: 159 57% 48%;
+    --primary-foreground: 150 30% 8%;
+    --primary-soft: 156 38% 15%;
+    --secondary: 150 2% 17%;
+    --secondary-foreground: 90 4% 91%;
+    --muted: 150 2% 17%;
+    --muted-foreground: 135 2% 61%;
+    --accent: 150 2% 17%;
+    --accent-foreground: 90 4% 91%;
+    --destructive: 6 68% 62%;
+    --destructive-foreground: 150 30% 8%;
+    --border: 140 3% 21%;
+    --input: 140 3% 24%;
+    --ring: 159 57% 48%;
+    --sidebar: 150 3% 12%;
+    color-scheme: dark;
   }
 }
 
@@ -33,6 +62,11 @@
   }
   body {
     @apply bg-background text-foreground antialiased;
+    font-size: 14px;
+    line-height: 1.55;
+  }
+  h1, h2, h3 {
+    text-wrap: balance;
   }
 }
 

@@ -339,7 +339,7 @@ export default function EditProjectPage({ params }: EditProjectPageProps) {
                   name="featured"
                   checked={formData.featured}
                   onChange={handleChange}
-                  className="h-4 w-4 rounded border-gray-300"
+                  className="h-4 w-4 rounded border-input accent-primary"
                 />
                 <Label htmlFor="featured" className="cursor-pointer">
                   Featured Project

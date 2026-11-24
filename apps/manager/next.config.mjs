@@ -6,6 +6,7 @@ const nextConfig = {
     "@ecosystem/ui",
     "@ecosystem/database",
     "@ecosystem/config",
+    "@ecosystem/cv-core",
   ],
   serverExternalPackages: [],
   images: {

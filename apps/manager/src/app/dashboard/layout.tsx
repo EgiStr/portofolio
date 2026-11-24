@@ -3,8 +3,12 @@
 import { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
-import { Menu } from "lucide-react";
+import { cn } from "@ecosystem/ui";
 import { Sidebar } from "@/components/dashboard/sidebar";
+import { TopBar } from "@/components/shell/topbar";
+import { CommandPalette } from "@/components/shell/command-palette";
+
+const COLLAPSE_KEY = "manager-sidebar-collapsed";
 
 export default function DashboardLayout({
   children,
@@ -13,46 +17,79 @@ export default function DashboardLayout({
 }) {
   const { data: session, status } = useSession();
   const router = useRouter();
-  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [drawer, setDrawer] = useState(false);
+  const [collapsed, setCollapsed] = useState(false);
+  const [palette, setPalette] = useState(false);
 
   useEffect(() => {
-    if (status === "unauthenticated") {
-      router.push("/login");
-    }
+    if (status === "unauthenticated") router.push("/login");
   }, [status, router]);
+
+  useEffect(() => {
+    try {
+      setCollapsed(localStorage.getItem(COLLAPSE_KEY) === "1");
+    } catch {}
+  }, []);
+
+  const toggleCollapsed = () =>
+    setCollapsed((c) => {
+      try {
+        localStorage.setItem(COLLAPSE_KEY, c ? "0" : "1");
+      } catch {}
+      return !c;
+    });
+
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "k") {
+        e.preventDefault();
+        setPalette((p) => !p);
+      } else if ((e.ctrlKey || e.metaKey) && e.key === "\\") {
+        e.preventDefault();
+        toggleCollapsed();
+      }
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, []);
 
   if (status === "loading") {
     return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary" />
+      <div
+        className="flex min-h-screen items-center justify-center bg-background"
+        role="status"
+      >
+        <span className="text-sm text-muted-foreground">Loading workspace</span>
       </div>
     );
   }
 
-  if (!session) {
-    return null;
-  }
+  if (!session) return null;
 
   return (
     <div className="min-h-screen bg-background">
-      <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
-
-      {/* Mobile Header with Hamburger */}
-      <div className="lg:hidden fixed top-0 left-0 right-0 h-16 bg-card border-b border-border z-30 flex items-center px-4">
-        <button
-          onClick={() => setSidebarOpen(true)}
-          className="p-2 rounded-lg hover:bg-secondary transition-colors min-w-[44px] min-h-[44px] flex items-center justify-center"
-          aria-label="Open menu"
-        >
-          <Menu className="w-6 h-6" />
-        </button>
-        <span className="ml-3 font-medium text-foreground">Manager</span>
+      <Sidebar
+        isOpen={drawer}
+        onClose={() => setDrawer(false)}
+        collapsed={collapsed}
+        onCollapse={toggleCollapsed}
+        onSearch={() => setPalette(true)}
+      />
+      <div
+        className={cn(
+          "min-w-0 transition-[margin] duration-150",
+          !collapsed && "lg:ml-[248px]",
+        )}
+      >
+        <TopBar
+          collapsed={collapsed}
+          onExpand={toggleCollapsed}
+          onMenu={() => setDrawer(true)}
+          onSearch={() => setPalette(true)}
+        />
+        <main className="px-4 py-6 sm:px-6 lg:px-10 lg:py-8">{children}</main>
       </div>
-
-      {/* Main Content */}
-      <main className="lg:ml-64 pt-16 lg:pt-0 p-4 sm:p-6 lg:p-8">
-        {children}
-      </main>
+      <CommandPalette open={palette} onOpenChange={setPalette} />
     </div>
   );
 }

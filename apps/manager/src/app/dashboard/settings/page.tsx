@@ -437,7 +437,7 @@ export default function SettingsPage() {
                       onChange={(e) =>
                         handleChange("showReadingTime", e.target.checked)
                       }
-                      className="h-5 w-5 rounded border-gray-300"
+                      className="h-5 w-5 rounded border-input accent-primary"
                     />
                   </div>
                   <div className="flex items-center justify-between">
@@ -455,7 +455,7 @@ export default function SettingsPage() {
                       onChange={(e) =>
                         handleChange("showViewCount", e.target.checked)
                       }
-                      className="h-5 w-5 rounded border-gray-300"
+                      className="h-5 w-5 rounded border-input accent-primary"
                     />
                   </div>
                 </div>

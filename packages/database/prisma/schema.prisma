@@ -472,3 +472,112 @@ model NewsletterSubscriber {
   @@index([unsubscribedAt])
   @@map("newsletter_subscribers")
 }
+
+// ============================================
+// CV (cv.eggisatria.my.id)
+// ============================================
+
+// One CV document. BASE is the master CV; TAILORED versions are copies adjusted
+// for one job. `content` and `style` follow the zod schema in @ecosystem/cv.
+// Tailoring never writes back to Experience/Project rows.
+model CvVersion {
+  id             String   @id @default(cuid())
+  slug           String   @unique
+  title          String
+  kind           CvKind   @default(TAILORED)
+  targetRole     String?
+  company        String?
+  jobDescription String?  @db.Text
+  content        Json
+  style          Json?
+  atsScore       Int?
+  isPublic       Boolean  @default(false)
+  isPrimary      Boolean  @default(false)
+  brainNotePath  String?
+  createdBy      String?  // "manager", "mcp:<key name>", "seed"
+
+  // The job application this version was tailored for (null for the master CV).
+  applicationId String?
+  application   JobApplication?  @relation("ApplicationVersions", fields: [applicationId], references: [id], onDelete: SetNull)
+  sentFor       JobApplication[] @relation("SentCv")
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([isPrimary])
+  @@index([applicationId])
+  @@map("cv_versions")
+}
+
+enum CvKind {
+  BASE
+  TAILORED
+}
+
+// ============================================
+// Job tracker (manager /dashboard/applications)
+// ============================================
+
+// One job application: a company and role, its stage, and the CV versions
+// tailored for it. Contact and salary fields stay in this database only; the
+// brain note gets company, role, stage, dates, source, link, CV and ATS score.
+model JobApplication {
+  id             String   @id @default(cuid())
+  company        String
+  role           String
+  location       String?
+  jobUrl         String?
+  source         String?  // LinkedIn, Glints, Jobstreet, referral, company site
+  jobDescription String?  @db.Text
+  stage          JobStage @default(WISHLIST)
+  appliedAt      DateTime?
+  followUpAt     DateTime?
+  contactName    String?
+  contactEmail   String?
+  contactUrl     String?
+  salaryExpected String?
+  salaryOffer    String?
+  notes          String?  @db.Text
+  brainNotePath  String?
+  createdBy      String?
+
+  sentCvId String?
+  sentCv   CvVersion?   @relation("SentCv", fields: [sentCvId], references: [id], onDelete: SetNull)
+  versions CvVersion[]  @relation("ApplicationVersions")
+  events   JobApplicationEvent[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([stage])
+  @@map("job_applications")
+}
+
+// Timeline entry: a stage change, an interview or test round, a note.
+model JobApplicationEvent {
+  id            String    @id @default(cuid())
+  applicationId String
+  application   JobApplication @relation(fields: [applicationId], references: [id], onDelete: Cascade)
+  kind          String    // stage | interview | assessment | note | follow_up
+  stage         JobStage?
+  title         String
+  at            DateTime  @default(now())
+  notes         String?   @db.Text
+  createdAt     DateTime  @default(now())
+
+  @@index([applicationId, at])
+  @@map("job_application_events")
+}
+
+enum JobStage {
+  WISHLIST
+  APPLIED
+  SCREENING
+  ASSESSMENT
+  INTERVIEW
+  OFFER
+  ACCEPTED
+  REJECTED
+  WITHDRAWN
+  GHOSTED
+}

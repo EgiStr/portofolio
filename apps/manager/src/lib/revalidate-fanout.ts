@@ -24,6 +24,7 @@ function resolveTargets(): string[] {
     process.env.NEXT_PUBLIC_BLOG_URL,
     process.env.NEXT_PUBLIC_EDS_URL,
     process.env.NEXT_PUBLIC_HUB_URL,
+    process.env.NEXT_PUBLIC_CV_URL,
   ];
   return candidates.filter((u): u is string => Boolean(u));
 }

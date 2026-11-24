@@ -3,131 +3,173 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useSession, signOut } from "next-auth/react";
-import {
-  LayoutDashboard,
-  FolderKanban,
-  FileText,
-  BarChart3,
-  Settings,
-  LogOut,
-  User,
-  Briefcase,
-  Code,
-  Scroll,
-  Award,
-  Key,
-  X,
-  Mail,
-  Inbox,
-} from "lucide-react";
-import { Button } from "@ecosystem/ui";
-
-const sidebarLinks = [
-  { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
-  { name: "Projects", href: "/dashboard/projects", icon: FolderKanban },
-  { name: "Blog Posts", href: "/dashboard/posts", icon: FileText },
-  { name: "Experience", href: "/dashboard/experiences", icon: Briefcase },
-  { name: "Skills", href: "/dashboard/skills", icon: Code },
-  { name: "Certifications", href: "/dashboard/certifications", icon: Award },
-  { name: "Resume", href: "/dashboard/resume", icon: Scroll },
-  { name: "Newsletter", href: "/dashboard/newsletter", icon: Mail },
-  { name: "Contact", href: "/dashboard/contact", icon: Inbox },
-  { name: "API Keys", href: "/dashboard/api-keys", icon: Key },
-  { name: "Analytics", href: "/dashboard/analytics", icon: BarChart3 },
-  { name: "Settings", href: "/dashboard/settings", icon: Settings },
-];
+import { ChevronsLeft, LogOut, Monitor, Moon, Search, Sun } from "lucide-react";
+import { cn } from "@ecosystem/ui";
+import { NAV, navFor } from "@/components/shell/nav";
+import { useTheme, type ThemeChoice } from "@/components/shell/theme";
 
 interface SidebarProps {
+  /** Mobile drawer state. */
   isOpen?: boolean;
   onClose?: () => void;
+  /** Desktop: hide the sidebar completely (Ctrl+\). */
+  collapsed?: boolean;
+  onCollapse?: () => void;
+  onSearch?: () => void;
 }
 
-export function Sidebar({ isOpen = false, onClose }: SidebarProps) {
+const THEMES: { value: ThemeChoice; label: string; icon: typeof Sun }[] = [
+  { value: "light", label: "Light", icon: Sun },
+  { value: "dark", label: "Dark", icon: Moon },
+  { value: "system", label: "System", icon: Monitor },
+];
+
+export function Sidebar({
+  isOpen = false,
+  onClose,
+  collapsed = false,
+  onCollapse,
+  onSearch,
+}: SidebarProps) {
   const pathname = usePathname();
   const { data: session } = useSession();
+  const { choice, setTheme } = useTheme();
+  const current = navFor(pathname)?.href;
+  const name = session?.user?.name || "Admin";
 
   return (
     <>
-      {/* Mobile Overlay */}
       {isOpen && (
         <div
-          className="fixed inset-0 bg-black/50 z-40 lg:hidden"
+          className="fixed inset-0 z-40 bg-foreground/20 lg:hidden"
           onClick={onClose}
           aria-hidden="true"
         />
       )}
 
-      {/* Sidebar */}
       <aside
-        className={`fixed left-0 top-0 bottom-0 w-64 bg-card border-r border-border flex flex-col z-50 transition-transform duration-300 lg:translate-x-0 ${
-          isOpen ? "translate-x-0" : "-translate-x-full"
-        }`}
+        className={cn(
+          "fixed bottom-0 left-0 top-0 z-50 flex w-[248px] flex-col border-r bg-sidebar transition-transform duration-150",
+          isOpen ? "translate-x-0" : "-translate-x-full",
+          !collapsed && "lg:translate-x-0",
+        )}
+        aria-label="Sidebar"
       >
-        {/* Logo */}
-        <div className="p-6 border-b border-border flex items-center justify-between">
-          <Link href="/dashboard" className="flex items-center gap-2">
-            <img
-              src="/logo.png"
-              alt="Eggi Satria Logo"
-              className="h-8 w-auto"
-            />
-            <span className="text-foreground font-medium">Manager</span>
-          </Link>
-          {/* Close button for mobile */}
-          <button
+        <div className="group flex h-12 items-center gap-2 px-3">
+          <Link
+            href="/dashboard"
             onClick={onClose}
-            className="lg:hidden p-2 rounded-lg hover:bg-secondary transition-colors"
-            aria-label="Close menu"
+            className="flex min-w-0 flex-1 items-center gap-2 rounded-md px-1.5 py-1 hover:bg-accent"
           >
-            <X className="w-5 h-5" />
+            <span
+              className="flex h-5 w-5 shrink-0 items-center justify-center rounded bg-primary text-[11px] font-semibold text-primary-foreground"
+              aria-hidden
+            >
+              {name.charAt(0).toUpperCase()}
+            </span>
+            <span className="truncate text-sm font-medium">
+              {name}&rsquo;s manager
+            </span>
+          </Link>
+          <button
+            onClick={() => (isOpen ? onClose?.() : onCollapse?.())}
+            className="flex h-7 w-7 items-center justify-center rounded-md text-muted-foreground hover:bg-accent hover:text-foreground lg:opacity-0 lg:focus-visible:opacity-100 lg:group-hover:opacity-100"
+            aria-label="Hide sidebar"
+            title="Hide sidebar (Ctrl+\)"
+          >
+            <ChevronsLeft className="h-4 w-4" />
           </button>
         </div>
 
-        {/* Navigation */}
-        <nav className="flex-1 p-4 space-y-1 overflow-y-auto">
-          {sidebarLinks.map((link) => {
-            const isActive = pathname === link.href;
-            return (
-              <Link
-                key={link.name}
-                href={link.href}
-                onClick={onClose}
-                className={`flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium transition-colors min-h-[44px] ${
-                  isActive
-                    ? "bg-primary text-primary-foreground"
-                    : "text-muted-foreground hover:text-foreground hover:bg-secondary"
-                }`}
-              >
-                <link.icon className="w-5 h-5 flex-shrink-0" />
-                {link.name}
-              </Link>
-            );
-          })}
+        <div className="px-3 pb-2">
+          <button
+            onClick={() => {
+              onClose?.();
+              onSearch?.();
+            }}
+            className="flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-sm text-muted-foreground hover:bg-accent hover:text-foreground"
+          >
+            <Search className="h-4 w-4" strokeWidth={1.75} />
+            <span className="flex-1 text-left">Search</span>
+            <kbd className="font-mono text-[11px]">Ctrl K</kbd>
+          </button>
+        </div>
+
+        <nav className="flex-1 space-y-4 overflow-y-auto px-3 pb-4">
+          {NAV.map((g) => (
+            <div key={g.group}>
+              <p className="px-2 pb-1 text-[11px] font-medium uppercase tracking-[0.06em] text-muted-foreground">
+                {g.group}
+              </p>
+              <ul className="space-y-px">
+                {g.items.map((item) => {
+                  const active = item.href === current;
+                  return (
+                    <li key={item.href}>
+                      <Link
+                        href={item.href}
+                        onClick={onClose}
+                        aria-current={active ? "page" : undefined}
+                        className={cn(
+                          "flex min-h-[32px] items-center gap-2.5 rounded-md px-2 py-1.5 text-sm",
+                          active
+                            ? "bg-primary-soft font-medium text-foreground"
+                            : "text-foreground/80 hover:bg-accent hover:text-foreground",
+                        )}
+                      >
+                        <item.icon
+                          className={cn(
+                            "h-4 w-4 shrink-0",
+                            active ? "text-primary" : "text-muted-foreground",
+                          )}
+                          strokeWidth={1.75}
+                        />
+                        {item.name}
+                      </Link>
+                    </li>
+                  );
+                })}
+              </ul>
+            </div>
+          ))}
         </nav>
 
-        {/* User Info */}
-        <div className="p-4 border-t border-border">
-          <div className="flex items-center gap-3 px-4 py-2 mb-2">
-            <div className="w-8 h-8 rounded-full bg-secondary flex items-center justify-center flex-shrink-0">
-              <User className="w-4 h-4 text-muted-foreground" />
-            </div>
-            <div className="flex-1 min-w-0">
-              <p className="text-sm font-medium text-foreground truncate">
-                {session?.user?.name || "Admin"}
-              </p>
-              <p className="text-xs text-muted-foreground truncate">
-                {session?.user?.email}
-              </p>
-            </div>
-          </div>
-          <Button
-            variant="ghost"
-            className="w-full justify-start text-muted-foreground hover:text-destructive min-h-[44px]"
-            onClick={() => signOut({ callbackUrl: "/login" })}
+        <div className="space-y-2 border-t p-3">
+          <div
+            role="radiogroup"
+            aria-label="Theme"
+            className="grid grid-cols-3 gap-1 rounded-md bg-accent p-0.5"
           >
-            <LogOut className="w-4 h-4 mr-2" />
-            Sign Out
-          </Button>
+            {THEMES.map((t) => (
+              <button
+                key={t.value}
+                role="radio"
+                aria-checked={choice === t.value}
+                onClick={() => setTheme(t.value)}
+                className={cn(
+                  "flex items-center justify-center gap-1.5 rounded px-1 py-1 text-xs",
+                  choice === t.value
+                    ? "bg-card font-medium text-foreground shadow-sm"
+                    : "text-muted-foreground hover:text-foreground",
+                )}
+              >
+                <t.icon className="h-3.5 w-3.5" strokeWidth={1.75} />
+                {t.label}
+              </button>
+            ))}
+          </div>
+          <div className="flex items-center gap-2 px-1">
+            <p className="min-w-0 flex-1 truncate text-xs text-muted-foreground">
+              {session?.user?.email}
+            </p>
+            <button
+              onClick={() => signOut({ callbackUrl: "/login" })}
+              className="flex h-7 items-center gap-1.5 rounded-md px-2 text-xs text-muted-foreground hover:bg-accent hover:text-destructive"
+            >
+              <LogOut className="h-3.5 w-3.5" />
+              Sign out
+            </button>
+          </div>
         </div>
       </aside>
     </>

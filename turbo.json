@@ -11,7 +11,15 @@
         "NEXTAUTH_URL",
         "NEXTAUTH_SECRET",
         "NEXT_PUBLIC_SUPABASE_URL",
-        "SUPABASE_SERVICE_ROLE_KEY"
+        "SUPABASE_SERVICE_ROLE_KEY",
+        "NEXT_PUBLIC_CV_URL",
+        "NEXT_PUBLIC_SITE_URL",
+        "REVALIDATE_SECRET",
+        "GEMINI_API_KEY",
+        "GEMINI_MODEL",
+        "BRAIN_MCP_URL",
+        "BRAIN_MCP_TOKEN",
+        "BRAIN_APPLICATIONS_FOLDER"
       ]
     },
     "dev": {

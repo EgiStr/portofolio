@@ -1,15 +1,19 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Inter, JetBrains_Mono, Source_Serif_4 } from "next/font/google";
 import Script from "next/script";
 import { Providers } from "@/components/providers";
 import { Toaster } from "sonner";
 import { prisma } from "@ecosystem/database";
+import { themeScript } from "@/components/shell/theme";
 import "./globals.css";
 
-const inter = Inter({
+const inter = Inter({ subsets: ["latin"], variable: "--font-sans" });
+const serif = Source_Serif_4({
   subsets: ["latin"],
-  variable: "--font-sans",
+  weight: ["600"],
+  variable: "--font-serif",
 });
+const mono = JetBrains_Mono({ subsets: ["latin"], variable: "--font-mono" });
 
 export const metadata: Metadata = {
   title: {
@@ -56,8 +60,13 @@ export default async function RootLayout({
   const gaId = settings.googleAnalyticsId || "";
 
   return (
-    <html lang="en" className="dark">
-      <body className={`${inter.variable} font-sans min-h-screen`}>
+    <html lang="en" suppressHydrationWarning>
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: themeScript }} />
+      </head>
+      <body
+        className={`${inter.variable} ${serif.variable} ${mono.variable} font-sans min-h-screen`}
+      >
         {/* Google Analytics */}
         {gaId && (gaId.startsWith("G-") || gaId.startsWith("GT-")) && (
           <>

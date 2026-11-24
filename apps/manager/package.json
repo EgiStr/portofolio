@@ -10,10 +10,12 @@
   },
   "dependencies": {
     "@ecosystem/config": "workspace:*",
+    "@ecosystem/cv-core": "workspace:*",
     "@ecosystem/database": "workspace:*",
     "@ecosystem/ui": "workspace:*",
     "@google/generative-ai": "^0.24.1",
     "@hookform/resolvers": "^3.9.0",
+    "@modelcontextprotocol/sdk": "^1.32.1",
     "@prisma/nextjs-monorepo-workaround-plugin": "^7.2.0",
     "@radix-ui/react-dialog": "^1.1.1",
     "@react-pdf/renderer": "^4.3.2",
@@ -34,7 +36,7 @@
     "sharp": "^0.34.5",
     "sonner": "^1.7.0",
     "tailwind-merge": "^2.5.0",
-    "zod": "^3.23.0"
+    "zod": "^3.25.76"
   },
   "devDependencies": {
     "@ecosystem/tailwind-config": "workspace:*",

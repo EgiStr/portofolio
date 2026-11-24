@@ -254,7 +254,7 @@ export default function EditExperiencePage({
                     id="current"
                     checked={formData.current}
                     onChange={(e) => handleChange("current", e.target.checked)}
-                    className="h-4 w-4 rounded border-gray-300"
+                    className="h-4 w-4 rounded border-input accent-primary"
                   />
                   <Label htmlFor="current" className="mb-0 cursor-pointer">
                     I currently work here
