@@ -2,6 +2,7 @@ import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { WebStandardStreamableHTTPServerTransport } from "@modelcontextprotocol/sdk/server/webStandardStreamableHttp.js";
 import { z } from "zod";
 import { authenticateMcp } from "@/lib/mcp-auth";
+import { CV_INSTRUCTIONS, registerCvTools } from "@/lib/mcp-cv";
 import {
   certifications,
   ContentError,
@@ -15,9 +16,9 @@ import {
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
-const CV_URL = process.env.NEXT_PUBLIC_CV_URL ?? "https://cv.eggisatria.my.id";
+const INSTRUCTIONS = `Manager for eggisatria.my.id: blog posts, portfolio projects, work experience, skills, certifications and site settings. Read before you write: every update needs expectedUpdatedAt from your last read (skills have no updatedAt and are updated directly). Deletes are permanent and need confirm: true. Write only facts the owner gave you or that already exist in the records; do not invent employers, dates, numbers or links. No em dashes in public text. Changes show on the landing site within about 60 seconds and on the blog at once; settings refresh every app immediately.
 
-const INSTRUCTIONS = `Manager for eggisatria.my.id: blog posts, portfolio projects, work experience, skills, certifications and site settings. Read before you write: every update needs expectedUpdatedAt from your last read (skills have no updatedAt and are updated directly). Deletes are permanent and need confirm: true. Write only facts the owner gave you or that already exist in the records; do not invent employers, dates, numbers or links. No em dashes in public text. Changes show on the landing site within about 60 seconds and on the blog at once; settings refresh every app immediately. CV versions and job applications live on a separate MCP at ${CV_URL}/api/mcp (the same zia key works there).`;
+${CV_INSTRUCTIONS}`;
 
 const text = (value: unknown) => ({
   content: [
@@ -135,7 +136,7 @@ function partial<T extends Record<string, z.ZodTypeAny>>(shape: T) {
   ) as { [K in keyof T]: z.ZodOptional<T[K]> };
 }
 
-function buildServer() {
+function buildServer(actor: string) {
   const server = new McpServer(
     { name: "eggisatria-manager", version: "1.0.0" },
     { instructions: INSTRUCTIONS },
@@ -398,6 +399,8 @@ function buildServer() {
     async ({ values }) => guard(() => settings.update(values)),
   );
 
+  registerCvTools(server, actor);
+
   return server;
 }
 
@@ -422,7 +425,7 @@ async function handle(req: Request) {
     sessionIdGenerator: undefined,
     enableJsonResponse: true,
   });
-  await buildServer().connect(transport);
+  await buildServer(`mcp:${key.name}`).connect(transport);
   return transport.handleRequest(req);
 }
 
