@@ -98,7 +98,7 @@ const PRIVATE = [
 
 /** Application for agents: private fields only on request, CV versions as summaries. */
 function appView(a: App, includePrivate = false) {
-  const { versions, sentCv, events, ...rest } = a;
+  const { versions, sentCv, events, letters, documents, ...rest } = a;
   const base: Record<string, unknown> = { ...rest };
   if (!includePrivate) for (const k of PRIVATE) delete base[k];
   return {
@@ -113,6 +113,17 @@ function appView(a: App, includePrivate = false) {
     sentCv: sentCv
       ? { slug: sentCv.slug, title: sentCv.title, atsScore: sentCv.atsScore }
       : null,
+    letters: letters.map((l) => ({
+      slug: l.slug,
+      title: l.title,
+      isPublic: l.isPublic,
+      updatedAt: l.updatedAt,
+    })),
+    documents: documents.map((d) => ({
+      id: d.document.id,
+      kind: d.document.kind,
+      title: d.document.title,
+    })),
     events: events.map((e) => ({
       id: e.id,
       kind: e.kind,

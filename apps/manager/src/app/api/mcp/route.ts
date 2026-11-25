@@ -3,6 +3,7 @@ import { WebStandardStreamableHTTPServerTransport } from "@modelcontextprotocol/
 import { z } from "zod";
 import { authenticateMcp } from "@/lib/mcp-auth";
 import { CV_INSTRUCTIONS, registerCvTools } from "@/lib/mcp-cv";
+import { LETTER_INSTRUCTIONS, registerLetterTools } from "@/lib/mcp-letters";
 import {
   certifications,
   ContentError,
@@ -18,7 +19,9 @@ export const dynamic = "force-dynamic";
 
 const INSTRUCTIONS = `Manager for eggisatria.my.id: blog posts, portfolio projects, work experience, skills, certifications and site settings. Read before you write: every update needs expectedUpdatedAt from your last read (skills have no updatedAt and are updated directly). Deletes are permanent and need confirm: true. Write only facts the owner gave you or that already exist in the records; do not invent employers, dates, numbers or links. No em dashes in public text. Changes show on the landing site within about 60 seconds and on the blog at once; settings refresh every app immediately.
 
-${CV_INSTRUCTIONS}`;
+${CV_INSTRUCTIONS}
+
+${LETTER_INSTRUCTIONS}`;
 
 const text = (value: unknown) => ({
   content: [
@@ -400,6 +403,7 @@ function buildServer(actor: string) {
   );
 
   registerCvTools(server, actor);
+  registerLetterTools(server, actor);
 
   return server;
 }
