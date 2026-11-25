@@ -23,6 +23,8 @@ export const BUCKETS = {
   BLOG: "blog",
   AVATARS: "avatars",
   CERTIFICATES: "certificates",
+  /** Private: diplomas and transcripts. Read only through signed URLs. */
+  DOCUMENTS: "documents",
 } as const;
 
 // Helper function to get public URL for an image
@@ -78,4 +80,43 @@ export function generateFilename(originalName: string): string {
   const random = Math.random().toString(36).substring(2, 8);
   const extension = originalName.split(".").pop();
   return `${timestamp}-${random}.${extension}`;
+}
+
+// The documents bucket holds personal files, so it is private. Created on first use.
+let documentsReady = false;
+export async function ensurePrivateBucket(
+  name: string,
+): Promise<string | null> {
+  if (documentsReady) return null;
+  const { data } = await supabase.storage.getBucket(name);
+  if (!data) {
+    const { error } = await supabase.storage.createBucket(name, {
+      public: false,
+      fileSizeLimit: 10 * 1024 * 1024,
+    });
+    if (error && !/already exists/i.test(error.message)) return error.message;
+  } else if (data.public) {
+    const { error } = await supabase.storage.updateBucket(name, {
+      public: false,
+    });
+    if (error) return error.message;
+  }
+  documentsReady = true;
+  return null;
+}
+
+export async function signedUrl(
+  bucket: string,
+  path: string,
+  seconds = 300,
+  downloadAs?: string,
+): Promise<string | null> {
+  const { data, error } = await supabase.storage
+    .from(bucket)
+    .createSignedUrl(
+      path,
+      seconds,
+      downloadAs ? { download: downloadAs } : undefined,
+    );
+  return error ? null : (data?.signedUrl ?? null);
 }

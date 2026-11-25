@@ -7,6 +7,7 @@
   "exports": {
     ".": "./src/index.ts",
     "./pdf": "./src/pdf.ts",
+    "./letter-pdf": "./src/letter-pdf.ts",
     "./pdf-server": "./src/pdf-server.ts",
     "./store": "./src/store.ts",
     "./brain": "./src/brain.ts",

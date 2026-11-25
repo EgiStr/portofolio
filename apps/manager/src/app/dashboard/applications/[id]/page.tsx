@@ -2,6 +2,7 @@ import { notFound, redirect } from "next/navigation";
 import { getServerSession } from "next-auth";
 import { getApplication } from "@ecosystem/cv-core/applications";
 import { listVersions } from "@ecosystem/cv-core/store";
+import { listDocuments } from "@ecosystem/cv-core/documents";
 import { brainConfigured } from "@ecosystem/cv-core/brain";
 import { authOptions } from "@/lib/auth";
 import { ApplicationDetailView } from "@/components/applications/application-detail";
@@ -17,7 +18,10 @@ export default async function ApplicationPage({
   const { id } = await params;
   const app = await getApplication(id).catch(() => null);
   if (!app) notFound();
-  const versions = await listVersions();
+  const [versions, library] = await Promise.all([
+    listVersions(),
+    listDocuments(),
+  ]);
 
   return (
     <ApplicationDetailView
@@ -27,6 +31,11 @@ export default async function ApplicationPage({
         title: v.title,
         isPrimary: v.isPrimary,
         applicationId: v.applicationId,
+      }))}
+      library={library.map((d) => ({
+        id: d.id,
+        kind: d.kind,
+        title: d.title,
       }))}
       brain={brainConfigured()}
     />

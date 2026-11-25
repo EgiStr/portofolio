@@ -43,6 +43,7 @@ import {
   syncBrainAction,
 } from "@/actions/applications";
 import { Field, SOURCES } from "./tracker-board";
+import { DocumentsPanel, type LibraryRef } from "./documents-panel";
 
 type VersionRef = {
   slug: string;
@@ -93,10 +94,12 @@ type Form = ReturnType<typeof formOf>;
 export function ApplicationDetailView({
   initial,
   allVersions,
+  library,
   brain,
 }: {
   initial: ApplicationDetail;
   allVersions: VersionRef[];
+  library: LibraryRef[];
   brain: boolean;
 }) {
   const router = useRouter();
@@ -367,6 +370,7 @@ export function ApplicationDetailView({
 
         <div className="min-w-0 space-y-6">
           <VersionsPanel app={app} allVersions={allVersions} onChange={take} />
+          <DocumentsPanel app={app} library={library} onChange={take} />
           <Timeline app={app} onChange={take} />
           <BrainPanel app={app} brain={brain} />
           <DeleteApplication
