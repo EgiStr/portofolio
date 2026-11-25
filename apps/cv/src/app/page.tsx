@@ -9,7 +9,11 @@ export async function generateMetadata(): Promise<Metadata> {
   const cv = await getPrimaryCv();
   if (!cv) return {};
   const h = cv.content.header;
-  const summary = cv.content.sections.find((s) => s.type === "paragraph")?.text;
+  const summarySection = cv.content.sections.find(
+    (s) => s.id === "summary" || s.type === "paragraph",
+  );
+  const summary =
+    summarySection?.text ?? summarySection?.items?.map((i) => i.text).join(" ");
   return {
     title: { absolute: `${h.name} | ${h.headline ?? "CV"}` },
     description: summary?.slice(0, 160),
