@@ -1,6 +1,7 @@
 import { createRequire } from "node:module";
 import { renderToBuffer } from "@react-pdf/renderer";
 import { createCvPdfElement, type CreateElement, type CvPdfProps } from "./pdf";
+import { createLetterPdfElement, type LetterPdfProps } from "./letter-pdf";
 
 declare const __non_webpack_require__: NodeJS.Require | undefined;
 
@@ -22,5 +23,10 @@ function nodeReact(): { createElement: CreateElement } {
 
 export async function renderCvPdf(props: CvPdfProps): Promise<Buffer> {
   const el = createCvPdfElement(nodeReact().createElement, props);
+  return renderToBuffer(el);
+}
+
+export async function renderLetterPdf(props: LetterPdfProps): Promise<Buffer> {
+  const el = createLetterPdfElement(nodeReact().createElement, props);
   return renderToBuffer(el);
 }

@@ -129,3 +129,9 @@ a { color: inherit; }
   .wrap { padding: 0; max-width: none; }
   .paper { box-shadow: none; padding: 0; }
 }
+
+/* Cover letter page */
+.letter .l-block { margin-top: 18px; }
+.letter .l-para { margin-top: 10px; white-space: pre-line; }
+.letter .l-line { display: block; }
+.letter .l-sign { margin-top: 36px; }
