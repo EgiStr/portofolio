@@ -545,6 +545,8 @@ model JobApplication {
   sentCv   CvVersion?   @relation("SentCv", fields: [sentCvId], references: [id], onDelete: SetNull)
   versions CvVersion[]  @relation("ApplicationVersions")
   events   JobApplicationEvent[]
+  letters   CoverLetter[]         @relation("ApplicationLetters")
+  documents ApplicationDocument[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -580,4 +582,71 @@ enum JobStage {
   REJECTED
   WITHDRAWN
   GHOSTED
+}
+
+// ============================================
+// Cover letters and the document library (manager /dashboard/applications)
+// ============================================
+
+// A cover letter written for one application, stored like a CV version:
+// structured content, a style, and a compare-and-set updatedAt. Private by
+// default because it is addressed to one company.
+model CoverLetter {
+  id         String  @id @default(cuid())
+  slug       String  @unique
+  title      String
+  company    String?
+  targetRole String?
+  content    Json
+  style      Json?
+  isPublic   Boolean @default(false)
+  createdBy  String? // "manager", "mcp:<key name>", "seed"
+
+  applicationId String?
+  application   JobApplication? @relation("ApplicationLetters", fields: [applicationId], references: [id], onDelete: SetNull)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([applicationId])
+  @@map("cover_letters")
+}
+
+enum DocumentKind {
+  DIPLOMA
+  TRANSCRIPT
+  CERTIFICATE
+  OTHER
+}
+
+// A fixed document (diploma, transcript) uploaded once to the private
+// "documents" storage bucket and attached to any number of applications.
+// Only the storage path is kept here; links are signed and expire.
+model Document {
+  id          String       @id @default(cuid())
+  kind        DocumentKind @default(OTHER)
+  title       String
+  fileName    String
+  storagePath String       @unique
+  mimeType    String
+  sizeBytes   Int
+
+  applications ApplicationDocument[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("documents")
+}
+
+model ApplicationDocument {
+  applicationId String
+  application   JobApplication @relation(fields: [applicationId], references: [id], onDelete: Cascade)
+  documentId    String
+  document      Document       @relation(fields: [documentId], references: [id], onDelete: Cascade)
+  createdAt     DateTime       @default(now())
+
+  @@id([applicationId, documentId])
+  @@index([documentId])
+  @@map("application_documents")
 }

@@ -88,6 +88,22 @@ const versionSelect = {
   updatedAt: true,
 } as const;
 
+const letterSelect = {
+  slug: true,
+  title: true,
+  isPublic: true,
+  updatedAt: true,
+} as const;
+
+const documentSelect = {
+  id: true,
+  kind: true,
+  title: true,
+  fileName: true,
+  mimeType: true,
+  sizeBytes: true,
+} as const;
+
 export async function listApplications() {
   return prisma.jobApplication.findMany({
     include: {
@@ -109,6 +125,11 @@ export async function getApplication(id: string) {
     include: {
       versions: { select: versionSelect, orderBy: { updatedAt: "desc" } },
       sentCv: { select: versionSelect },
+      letters: { select: letterSelect, orderBy: { updatedAt: "desc" } },
+      documents: {
+        select: { document: { select: documentSelect } },
+        orderBy: { createdAt: "asc" },
+      },
       events: { orderBy: [{ at: "desc" }, { createdAt: "desc" }] },
     },
   });

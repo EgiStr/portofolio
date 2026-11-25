@@ -10,7 +10,9 @@
     "./pdf-server": "./src/pdf-server.ts",
     "./store": "./src/store.ts",
     "./brain": "./src/brain.ts",
-    "./applications": "./src/applications.ts"
+    "./applications": "./src/applications.ts",
+    "./letters": "./src/letter-store.ts",
+    "./documents": "./src/documents.ts"
   },
   "scripts": {
     "lint": "echo skip",
