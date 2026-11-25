@@ -64,7 +64,7 @@ export function DocumentLibrary({ docs }: { docs: LibraryDoc[] }) {
         className="grid gap-3 rounded-lg border border-border bg-card p-4 sm:grid-cols-[minmax(0,2fr)_minmax(0,1fr)_minmax(0,2fr)_auto] sm:items-end"
       >
         <div className="space-y-1">
-          <Label htmlFor="doc-file">File (PDF, PNG or JPG, up to 10 MB)</Label>
+          <Label htmlFor="doc-file">File (PDF, PNG or JPG, up to 4 MB)</Label>
           <Input
             id="doc-file"
             name="file"

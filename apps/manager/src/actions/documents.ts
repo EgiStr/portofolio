@@ -52,7 +52,7 @@ async function run<T>(fn: () => Promise<T>): Promise<Result<T>> {
   }
 }
 
-const MAX_BYTES = 10 * 1024 * 1024;
+const MAX_BYTES = 4 * 1024 * 1024;
 const MIME = new Set(["application/pdf", "image/png", "image/jpeg"]);
 
 const isKind = (v: unknown): v is DocumentKind =>
@@ -77,8 +77,7 @@ export async function uploadDocumentAction(form: FormData) {
     const file = form.get("file");
     if (!(file instanceof File) || file.size === 0)
       throw new CvStoreError("Choose a file.");
-    if (file.size > MAX_BYTES)
-      throw new CvStoreError("The file is over 10 MB.");
+    if (file.size > MAX_BYTES) throw new CvStoreError("The file is over 4 MB.");
     if (!MIME.has(file.type))
       throw new CvStoreError("Only PDF, PNG and JPG files are accepted.");
     const kind = form.get("kind");

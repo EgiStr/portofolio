@@ -9,6 +9,8 @@ const nextConfig = {
     "@ecosystem/cv-core",
   ],
   serverExternalPackages: [],
+  // Document uploads go through a server action; Vercel caps a request at 4.5 MB.
+  experimental: { serverActions: { bodySizeLimit: "4mb" } },
   images: {
     remotePatterns: [
       {
