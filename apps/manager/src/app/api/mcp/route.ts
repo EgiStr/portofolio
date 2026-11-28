@@ -434,5 +434,11 @@ async function handle(req: Request) {
 }
 
 export const POST = handle;
-export const GET = handle;
 export const DELETE = handle;
+
+// Stateless server with JSON responses has no server-initiated stream. Answering GET with an SSE
+// stream held each one open until the 300 s function timeout, which burned the Vercel quota.
+// 405 is the spec's way to say "no stream"; MCP clients then use POST only.
+export function GET() {
+  return new Response(null, { status: 405, headers: { Allow: "POST, DELETE" } });
+}
